@@ -129,8 +129,8 @@ if ( argc > 7 ) {
   DetectorConstruction* detConstruction = new DetectorConstruction;
   runManager->SetUserInitialization(detConstruction);
 <<<<<<< HEAD
-  //G4VUserPhysicsList* physics = new QGSP_BERT_HP;    // for neutron and muon
-  //runManager->SetUserInitialization(physics);        // for neutron and muon
+  //G4VUserPhysicsList* physics = new QGSP_BERT_HP;    // for neutron and muon (for muon try cut region in the rock: 5cm)
+  //runManager->SetUserInitialization(physics);        // for neutron and muon 
   runManager->SetUserInitialization(new PhysicsList);  // Livermore (or Penelope) for electrons
   runManager->SetUserInitialization(new ActionInitialization(detConstruction));
   //runManager->SetUserInitialization(new Shielding);  
