@@ -1,0 +1,131 @@
+# $Id: run.mac 68015 2013-03-13 13:27:27Z gcosmo $
+#
+# Macro file for "AnaEx01.cc"
+# 
+# can be run in batch, without graphic
+# or interactively: Idle> /control/execute run.mac
+#
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
+/gps/particle neutron
+
+/gps/pos/type Surface
+/gps/pos/shape Cylinder
+/gps/pos/centre 0. 0. 0. um
+#/gps/pos/halfx 2.1 m
+#/gps/pos/halfy 2.1 m
+/gps/pos/radius 2.1 m
+/gps/pos/halfz 2.1 m
+
+/gps/ang/type iso
+/gps/ang/surfnorm false
+
+/gps/ene/type User
+/gps/hist/type energy
+/gps/hist/point 0. 0.
+/gps/hist/point 0.1 1.95023e-09
+/gps/hist/point 0.2 6.12137e-10
+/gps/hist/point 0.3 4.54684e-10
+/gps/hist/point 0.4 3.57526e-10
+/gps/hist/point 0.5 2.66327e-10
+/gps/hist/point 0.6 4.02772e-10
+/gps/hist/point 0.7 3.81058e-10
+/gps/hist/point 0.8 3.84795e-10
+/gps/hist/point 0.9 3.13391e-10
+/gps/hist/point 1.0 1.87752e-10
+/gps/hist/point 1.1 1.78965e-10
+/gps/hist/point 1.2 2.60873e-10
+/gps/hist/point 1.3 2.39563e-10
+/gps/hist/point 1.4 2.01386e-10
+/gps/hist/point 1.5 2.2815e-10
+/gps/hist/point 1.6 2.12294e-10
+/gps/hist/point 1.7 1.66643e-10
+/gps/hist/point 1.8 1.72804e-10
+/gps/hist/point 1.9 1.42202e-10
+/gps/hist/point 2.0 1.23114e-10
+/gps/hist/point 2.1 1.17155e-10
+/gps/hist/point 2.2 1.14429e-10
+/gps/hist/point 2.3 1.18064e-10
+/gps/hist/point 2.4 1.61998e-10
+/gps/hist/point 2.5 1.08369e-10
+/gps/hist/point 2.6 9.02904e-11
+/gps/hist/point 2.7 7.6555e-11
+/gps/hist/point 2.8 6.41325e-11
+/gps/hist/point 2.9 5.171e-11
+/gps/hist/point 3.0 5.24169e-11
+/gps/hist/point 3.1 4.88821e-11
+/gps/hist/point 3.2 3.73685e-11
+/gps/hist/point 3.3 2.4845e-11
+/gps/hist/point 3.4 2.4441e-11
+/gps/hist/point 3.5 1.95932e-11
+/gps/hist/point 3.6 1.90883e-11
+/gps/hist/point 3.7 1.71693e-11
+/gps/hist/point 3.8 1.55534e-11
+/gps/hist/point 3.9 1.49474e-11
+/gps/hist/point 4.0 1.77753e-11
+/gps/hist/point 4.1 1.64624e-11
+/gps/hist/point 4.2 1.71693e-11
+/gps/hist/point 4.3 1.50484e-11
+/gps/hist/point 4.4 9.08964e-12
+/gps/hist/point 4.5 1.21195e-11
+/gps/hist/point 4.6 1.21195e-11
+/gps/hist/point 4.7 1.23215e-11
+/gps/hist/point 4.8 1.41394e-11
+/gps/hist/point 4.9 9.89761e-12
+/gps/hist/point 5.0 9.69562e-12
+/gps/hist/point 5.1 1.00996e-11
+/gps/hist/point 5.2 8.88765e-12
+/gps/hist/point 5.3 1.02006e-11
+/gps/hist/point 5.4 9.49363e-12
+/gps/hist/point 5.5 7.6757e-12
+/gps/hist/point 5.6 6.56474e-12
+/gps/hist/point 5.7 6.05976e-12
+/gps/hist/point 5.8 7.17072e-12
+/gps/hist/point 5.9 6.05976e-12
+/gps/hist/point 6.0 5.65578e-12
+/gps/hist/point 6.1 4.84781e-12
+/gps/hist/point 6.2 4.94881e-12
+/gps/hist/point 6.3 4.24183e-12
+/gps/hist/point 6.4 5.1508e-12
+/gps/hist/point 6.5 4.03984e-12
+/gps/hist/point 6.6 4.24183e-12
+/gps/hist/point 6.7 3.83785e-12
+/gps/hist/point 6.8 2.92888e-12
+/gps/hist/point 6.9 2.6259e-12
+/gps/hist/point 7.0 3.33287e-12
+/gps/hist/point 7.1 2.6259e-12
+/gps/hist/point 7.2 3.13088e-12
+/gps/hist/point 7.3 1.91892e-12
+/gps/hist/point 7.4 1.61594e-12
+/gps/hist/point 7.5 1.81793e-12
+/gps/hist/point 7.6 1.61594e-12
+/gps/hist/point 7.7 1.41394e-12
+/gps/hist/point 7.8 8.07968e-13
+/gps/hist/point 7.9 9.08964e-13
+/gps/hist/point 8.0 1.11096e-12
+/gps/hist/point 8.1 5.0498e-13
+/gps/hist/point 8.2 7.06972e-13
+/gps/hist/point 8.3 5.0498e-13
+/gps/hist/point 8.4 7.06972e-13
+/gps/hist/point 8.5 4.03984e-13
+/gps/hist/point 8.6 3.02988e-13
+/gps/hist/point 8.7 7.06972e-13
+/gps/hist/point 8.8 1.00996e-13
+/gps/hist/point 8.9 6.05976e-13
+/gps/hist/point 9.0 2.01992e-13
+/gps/hist/point 9.1 3.02988e-13
+/gps/hist/point 9.2 2.01992e-13
+/gps/hist/point 9.3 1.00996e-13
+/gps/hist/point 9.4 1.00996e-13
+/gps/hist/point 9.5 0
+/gps/hist/point 9.6 0
+/gps/hist/point 9.7 0
+/gps/hist/point 9.8 0
+/gps/hist/point 9.9 0
+/gps/hist/point 10 0
+
+
+/run/beamOn 10000000

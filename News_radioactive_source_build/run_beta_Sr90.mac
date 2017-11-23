@@ -1,0 +1,55 @@
+# $Id: run.mac 68015 2013-03-13 13:27:27Z gcosmo $
+#
+# Macro file for "AnaEx01.cc"
+# 
+# can be run in batch, without graphic
+# or interactively: Idle> /control/execute run.mac
+#
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
+/gps/particle e-
+
+/gps/pos/type Plane
+/gps/pos/shape Circle
+/gps/pos/centre 0. 0. 0.525 mm
+#/gps/pos/halfx 1 cm
+#/gps/pos/halfy 1 cm
+/gps/pos/radius 8 mm
+
+/gps/ang/type iso
+/gps/ang/mintheta  0.
+/gps/ang/maxtheta  1.571
+#/gps/ang/surfnorm
+
+/gps/ene/type User
+/gps/hist/type energy
+
+
+# Beta-Decay Sr 90	
+/gps/hist/point 0.    0.	
+/gps/hist/point 0.025 0.0776
+/gps/hist/point 0.050 0.0760
+/gps/hist/point 0.075 0.0749
+/gps/hist/point 0.100 0.0743
+/gps/hist/point 0.125 0.0743
+/gps/hist/point 0.150 0.0732
+/gps/hist/point 0.175 0.0721
+/gps/hist/point 0.200 0.0689
+/gps/hist/point 0.225 0.0662
+/gps/hist/point 0.250 0.0636
+/gps/hist/point 0.275 0.0602
+/gps/hist/point 0.300 0.0557
+/gps/hist/point 0.325 0.0506
+/gps/hist/point 0.350 0.0447
+/gps/hist/point 0.375 0.0387
+/gps/hist/point 0.400 0.0332
+/gps/hist/point 0.425 0.0264
+/gps/hist/point 0.450 0.0192
+/gps/hist/point 0.475 0.0117
+/gps/hist/point 0.500 0.0061
+/gps/hist/point 0.525 0.0019
+
+/run/beamOn 285590

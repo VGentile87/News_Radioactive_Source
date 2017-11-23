@@ -1,0 +1,26 @@
+# $Id: run.mac 68015 2013-03-13 13:27:27Z gcosmo $
+#
+# Macro file for "AnaEx01.cc"
+# 
+# can be run in batch, without graphic
+# or interactively: Idle> /control/execute run.mac
+#
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
+/gps/particle geantino
+
+/gps/pos/type Volume
+/gps/pos/shape Para
+/gps/pos/centre 0. 0. 0. um
+/gps/pos/halfx 2.1 m
+/gps/pos/halfy 2.1 m
+/gps/pos/halfz 2.1 m
+/gps/pos/confine OperaEmulsion
+/gps/ang/type iso
+
+/gps/ene/mono 5.30433 MeV
+
+/run/beamOn 100000

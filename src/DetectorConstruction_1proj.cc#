@@ -1,0 +1,1271 @@
+#include "DetectorConstruction.hh"
+#include "DetectorMessenger.hh"
+
+#include "G4Material.hh"
+#include "G4NistManager.hh"
+
+#include "G4Box.hh"
+#include "G4Tubs.hh"
+#include "G4LogicalVolume.hh"
+#include "G4PVPlacement.hh"
+#include "G4PVReplica.hh"
+
+#include "G4GeometryManager.hh"
+#include "G4PhysicalVolumeStore.hh"
+#include "G4LogicalVolumeStore.hh"
+#include "G4SolidStore.hh"
+
+#include "G4VisAttributes.hh"
+#include "G4Colour.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4RunManager.hh"
+#include "G4PhysicalConstants.hh"
+#include "G4SubtractionSolid.hh"
+#include "G4UnionSolid.hh"
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+DetectorConstruction::DetectorConstruction()
+:G4VUserDetectorConstruction(),
+ fDefaultMaterial(0), fCylMaterial(0),
+ fSolidWorld(0),fLogicWorld(0),fPhysiWorld(0),
+ fDetectorMessenger(0)
+{
+
+  // materials
+  DefineMaterials();
+  
+  // create commands for interactive definition of the calorimeter
+  fDetectorMessenger = new DetectorMessenger(this);
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+DetectorConstruction::~DetectorConstruction()
+{ delete fDetectorMessenger;}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4VPhysicalVolume* DetectorConstruction::Construct()
+{
+  return ConstructDetector();
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void DetectorConstruction::DefineMaterials()
+{ 
+
+  //
+  // Database Material
+  //
+  
+  G4NistManager* nistManager = G4NistManager::Instance();
+  nistManager->SetVerbose(1);
+  nistManager->FindOrBuildMaterial("G4_POLYETHYLENE"); // plates 
+  nistManager->FindOrBuildMaterial("G4_WATER");   // shielding
+  nistManager->FindOrBuildMaterial("G4_POLYSTYRENE");  // base emulsion
+  nistManager->FindOrBuildMaterial("G4_Pb");  //  lead
+  nistManager->FindOrBuildMaterial("G4_Fe");
+  nistManager->FindOrBuildMaterial("G4_Cu");  
+  nistManager->FindOrBuildMaterial("G4_PLEXIGLASS");  
+
+  //
+  // Material Properties
+  //
+  
+  G4double a;  // mass of a mole;
+  G4double z;  // z=mean number of protons;  
+  G4double density, opera_density, opera_base_density;
+  G4double fractionmass;
+  G4String name, symbol; 
+  G4int ncomponents, natoms;
+  G4int base_ncomponents;
+
+  //
+  // Emulsion Component  
+  //
+  
+  a = 126.9*g/mole;
+  G4Element* elI  = new G4Element(name="Iodium", symbol="I", z=53., a);
+  
+  a = 107.9*g/mole;
+  G4Element* elAg  = new G4Element(name="Silver", symbol="Ag", z=47., a);
+
+  a = 79.9*g/mole;
+  G4Element* elBr  = new G4Element(name="Bromine", symbol="Br", z=35., a);
+  
+  a = 32.1*g/mole;
+  G4Element* elS  = new G4Element(name="Sulphur", symbol="S", z=16., a);
+  
+  a = 16.00*g/mole;
+  G4Element* elO  = new G4Element(name="Oxygen", symbol="O", z=8., a);
+
+  a = 14.01*g/mole;
+  G4Element* elN  = new G4Element(name="Nitrogen", symbol="N", z= 7., a);
+  
+  a = 12.00*g/mole;
+  G4Element* elC  = new G4Element(name="Carbon", symbol="C", z= 6., a);
+
+  a = 1.01*g/mole;
+  G4Element* elH  = new G4Element(name="Hydrogen",symbol="H" , z= 1., a);
+
+  //
+  // NIT EMULSION MATERIAL
+  //
+  
+  density = 3.43*g/cm3; // NIT Emulsion
+  G4Material* Emulsion = new G4Material(name="Emulsion", density, ncomponents=8);
+
+  //
+  // Fraction Mass NIT
+  //
+  
+  Emulsion->AddElement(elAg,fractionmass=0.44065);
+  Emulsion->AddElement(elBr,fractionmass=0.32190);
+  Emulsion->AddElement(elI, fractionmass=0.01875);
+  Emulsion->AddElement(elC, fractionmass=0.1012);
+  Emulsion->AddElement(elO, fractionmass=0.0741);
+  Emulsion->AddElement(elN, fractionmass=0.0268);
+  Emulsion->AddElement(elH, fractionmass=0.0163);
+  Emulsion->AddElement(elS, fractionmass=0.0003);
+
+
+  ///// OPERA EMULSION
+
+
+  opera_density = 2.7088*g/cm3;
+  G4Material* Opera_Emulsion = new G4Material(name="Opera Emulsion",opera_density, ncomponents=8);
+  Opera_Emulsion->AddElement(elI, fractionmass=0.0810);
+  Opera_Emulsion->AddElement(elAg,fractionmass=0.3834);
+  Opera_Emulsion->AddElement(elBr,fractionmass=0.2786);
+  Opera_Emulsion->AddElement(elS, fractionmass=0.0090);
+  Opera_Emulsion->AddElement(elO, fractionmass=0.1243);
+  Opera_Emulsion->AddElement(elN, fractionmass=0.0481);
+  Opera_Emulsion->AddElement(elC, fractionmass=0.1300);
+  Opera_Emulsion->AddElement(elH, fractionmass=0.0240);
+
+
+  //// OPERA BASE PLASTIC
+  G4Material* TAC = new G4Material("TAC", opera_base_density= 1.1919*g/cm3, ncomponents=3);
+  TAC->AddElement(elC, natoms=28); 
+  TAC->AddElement(elH, natoms=38);
+  TAC->AddElement(elO, natoms=19);
+
+  
+
+  //
+  // World Material
+  //
+  
+  new G4Material("Galactic", z=1., a=1.01*g/mole,density= universe_mean_density,
+		 kStateGas, 2.73*kelvin, 3.e-18*pascal);
+ 
+
+  //PMMA C5H8O2 ( Acrylic )
+  // -------------
+  G4double ACRdensity = 1.19*g/cm3;
+  G4Material* Acrylic = new G4Material(name="Acrylic", ACRdensity, base_ncomponents=3);
+  Acrylic->AddElement(elC, 5);
+  Acrylic->AddElement(elH, 8);
+  Acrylic->AddElement(elO, 2);
+  
+
+  G4Material* Polystyrene = new G4Material("Polystyrene", density= 1.050*g/cm3, ncomponents=2);
+  Polystyrene->AddElement(elC, natoms=8); 
+  Polystyrene->AddElement(elH, natoms=8);
+
+  // Print materials
+  G4cout << *(G4Material::GetMaterialTable()) << G4endl;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4VPhysicalVolume* DetectorConstruction::ConstructDetector()
+{
+
+  ///// Physical Parameters /////
+
+  //
+  // Get materials
+  //
+  
+  G4Material* defaultMaterial = G4Material::GetMaterial("Galactic");           
+  G4Material* emulsionMaterial = G4Material::GetMaterial("Emulsion");            
+  //G4Material* baseMaterial = G4Material::GetMaterial("G4_POLYSTYRENE");
+  G4Material* baseMaterial = G4Material::GetMaterial("Acrylic");
+  //G4Material* plateMaterial = G4Material::GetMaterial("G4_WATER");
+  G4Material* plateMaterial = G4Material::GetMaterial("G4_POLYETHYLENE");
+  G4Material* leadMaterial = G4Material::GetMaterial("G4_Pb");
+  G4Material* supportMaterial = G4Material::GetMaterial("G4_Fe");
+  G4Material* coolingMaterial = G4Material::GetMaterial("G4_Cu");
+  G4Material* nitrogen_box_Material = G4Material::GetMaterial("G4_PLEXIGLASS");
+  G4Material* opera_emulsionMaterial = G4Material::GetMaterial("Opera Emulsion");			
+  G4Material* operabaseMaterial = G4Material::GetMaterial("TAC");
+  
+
+  if ( ! defaultMaterial ) {
+    G4ExceptionDescription msg;
+    msg << "Cannot retrieve materials already defined."; 
+    G4Exception("B4DetectorConstruction::DefineVolumes()",
+      "MyCode0001", FatalException, msg);
+  }  
+
+ 
+  /////  Geometrical Parameters /////
+
+  //
+  //Dimensioni del mondo
+  //
+  
+  G4double worldSizeX = 5 *m;
+  G4double worldSizeY = 5 *m;
+  G4double worldSizeZ = 5 *m; 
+
+  //
+  // Detector
+  //
+  
+  G4double baseThickness  = 175*um;
+  G4double layerThickness = 50*um;
+  G4double emuSizeX       = 12.0*cm;  
+  G4double emuSizeY       = 10.0*cm;
+  G4int nFilm             = 150;//50;   //envir //50000 //cosmog
+  G4double filmThickness   = baseThickness+layerThickness*2;
+  G4double detThickness   = filmThickness*nFilm;
+
+  //
+  // Shielding Polyethilene
+  //
+
+  G4double boxX = 92*cm;
+  G4double boxY = 92*cm;
+  G4double boxZ = 92*cm;
+  G4double boxThickness = 20*cm;
+
+  //
+  // Shielding Brick
+  //
+
+  /*G4double brickThickness = 10*cm;
+  G4double brickX = boxX - 2*boxThickness; //dentro
+  G4double brickY = boxY - 2*boxThickness; //dentro
+  G4double brickZ = boxZ - 2*boxThickness; //dentro*/
+
+  //
+  // Support Box
+  //
+
+  G4double supportThickness = 5*cm;
+  G4double supportX = 102*cm;//brickX - 2*brickThickness; 
+  G4double supportY = 102*cm;//brickY - 2*brickThickness; 
+  G4double supportZ = 102*cm;//brickZ - 2*brickThickness;
+
+  //
+  // Nitrogen Box
+  //
+
+  G4double nitrogenThickness = 5*cm;
+  G4double nitrogenX = supportX - 2*supportThickness - 2*boxThickness; 
+  G4double nitrogenY = supportY - 2*supportThickness - 2*boxThickness; 
+  G4double nitrogenZ = supportZ - 2*supportThickness - 2*boxThickness;
+
+
+  //
+  // Shielding Bottom plate
+  //
+
+  G4double plateTopX = 92*cm;
+  G4double plateTopY = 92*cm;
+  G4double plateTopThickness = 1.905*cm;
+  G4int NplatesTop = 32;
+  G4double plateBotX = 122*cm;
+  G4double plateBotY = 122*cm;
+  G4double plateBotThickness = 10.5*cm;
+  G4int NplatesBot = 6;
+
+
+  //
+  // Brick Dimension
+  //
+
+  G4double brickX = 12.8*cm;
+  G4double brickY = 10.2*cm;
+  G4double brickZ = 7.9*cm;
+
+  //
+  // Lead Dimension
+  //
+  
+  G4double leadX = 12.5*cm;
+  G4double leadY = 10.2*cm;
+  G4double leadZ = 1*mm;
+
+  //
+  // Opera Dimension
+  //
+  
+  G4double opera_baseThickness  = 0.205*mm;
+  G4double opera_layerThickness = 40*um;
+  G4double opera_emuSizeX       = 12.5*cm;  
+  G4double opera_emuSizeY       = 10.2*cm;
+  G4int opera_nFilm             = 56;
+  G4double opera_cellThickness   = opera_baseThickness+opera_layerThickness*2+leadZ;
+
+
+  //
+  // Lead Dimension
+  //
+  
+  G4double coolingX = 20*cm;
+  G4double coolingY = 20*cm;
+  G4double coolingZ = 15*cm;
+  G4double in_coolingX = 18*cm;
+  G4double in_coolingY = 18*cm;
+  G4double in_coolingZ = 5*cm;
+
+
+  
+    
+  //     
+  // World
+  //
+  
+  G4VSolid* worldS 
+    = new G4Box("World", worldSizeX/2, worldSizeY/2, worldSizeZ/2);                      
+  G4LogicalVolume* worldLV
+    = new G4LogicalVolume(worldS, defaultMaterial,"World");
+                                   
+  G4VPhysicalVolume* worldPV
+    = new G4PVPlacement(0, G4ThreeVector(),worldLV,                         
+                 "World", 0, false, 0, fCheckOverlaps); 
+  
+  //                               
+  // Emulsion Detector
+  //
+  
+  G4VSolid* detectorS 
+    = new G4Box("Detector", emuSizeX/2, emuSizeY/2, detThickness/2);
+                         
+  G4LogicalVolume* detectorLV
+    = new G4LogicalVolume(detectorS, defaultMaterial, "Detector"); 
+                                   
+  fDetectorPV
+    = new G4PVPlacement(0, G4ThreeVector(0., 0.,0.),
+                 detectorLV, "Detector", worldLV,  
+		 false, 0, fCheckOverlaps); 
+  //                               
+  // Emulsion Film
+  //
+  
+  G4VSolid* filmS 
+    = new G4Box("Film", emuSizeX/2, emuSizeY/2, filmThickness/2);
+  
+  G4LogicalVolume* filmLV
+    = new G4LogicalVolume(filmS,defaultMaterial, "Film");
+  
+  new G4PVReplica("Film", filmLV, detectorLV,
+		  kZAxis, nFilm, filmThickness);
+
+  //                               
+  // Layers
+  //
+ 
+   G4VSolid* emulsionS 
+    = new G4Box("Emulsion", emuSizeX/2, emuSizeY/2, layerThickness/2);
+                         
+  G4LogicalVolume* emulsionLV
+    = new G4LogicalVolume(emulsionS, emulsionMaterial, "Emulsion"); 
+                                   
+  fEmulsionTopPV
+    = new G4PVPlacement(0, G4ThreeVector(0., 0.,-baseThickness/2-layerThickness/2),
+                 emulsionLV, "Top Emulsion", filmLV,  
+		 false, 0, fCheckOverlaps); 
+
+  fEmulsionBotPV
+    = new G4PVPlacement(0, G4ThreeVector(0., 0.,+baseThickness/2+layerThickness/2),
+			emulsionLV, "Bottom Emulsion", filmLV,
+			false, 0, fCheckOverlaps);
+
+  //
+  // Plastic base
+  //
+ 
+  G4VSolid* baseS 
+    = new G4Box("Base", emuSizeX/2, emuSizeY/2, baseThickness/2);
+  
+  G4LogicalVolume* baseLV
+    = new G4LogicalVolume(baseS, baseMaterial, "Base"); 
+  
+  fBasePV
+    = new G4PVPlacement(0, G4ThreeVector(0., 0.,+layerThickness/2-layerThickness/2),
+			baseLV, "Base", filmLV,false, 0, fCheckOverlaps);
+
+  
+  //     
+  // Cooling System
+  //
+  
+  G4Box *outerCooling_box = new G4Box("Outer Cooling box",coolingX/2.,coolingY/2.,coolingZ/2.); 
+  G4Box *innerCooling_box = new G4Box("Inner Cooling box",in_coolingX/2.,in_coolingY/2.,in_coolingZ/2.); 
+  G4SubtractionSolid *cooling_box = new G4SubtractionSolid("Cooling box",outerCooling_box,innerCooling_box);
+
+  
+  G4LogicalVolume* cooling_box_LV
+    = new G4LogicalVolume(cooling_box,coolingMaterial,"Cooling box"); 
+  
+  fCooling_boxPV
+    = new G4PVPlacement(0, G4ThreeVector(0., 0.,0.),
+    cooling_box_LV, "Cooling box", worldLV,false, 0, fCheckOverlaps);
+
+
+    
+  //
+  // Nitrogen box
+  //
+  
+  G4Box *outerNitrogen_box = new G4Box("Outer Nitrogen box",nitrogenX/2.,nitrogenY/2.,nitrogenZ/2.); 
+  G4Box *innerNitrogen_box = new G4Box("Inner Nitrogen box",(nitrogenX-2*nitrogenThickness)/2.,(nitrogenY-2*nitrogenThickness)/2.,(nitrogenZ-2*nitrogenThickness)/2.); 
+  G4SubtractionSolid *nitrogen_box = new G4SubtractionSolid("Nitrogen box",outerNitrogen_box,innerNitrogen_box);
+
+  
+  G4LogicalVolume* nitrogen_box_LV
+    = new G4LogicalVolume(nitrogen_box,nitrogen_box_Material,"Nitrogen box"); 
+  
+  fNitrogen_boxPV
+    = new G4PVPlacement(0, G4ThreeVector(0., 0.,0.),
+    nitrogen_box_LV, "Nitrogen box", worldLV,false, 0, fCheckOverlaps);
+
+
+  
+  //
+  // Support box
+  //
+  
+  G4Box *outerSupport = new G4Box("Outer Support",supportX/2.,supportY/2.,supportZ/2.); 
+  G4Box *innerSupport = new G4Box("Inner Support",(supportX-2*supportThickness)/2.,(supportY-2*supportThickness)/2.,(supportZ/2.+0.1*mm));
+  G4SubtractionSolid *support_a = new G4SubtractionSolid("Support1",outerSupport,innerSupport);
+  G4Box *innerSupport2 = new G4Box("Inner Support2",(supportX-2*supportThickness)/2.,(supportY/2. + 0.1*mm),(supportZ-2*supportThickness)/2.); 
+  G4SubtractionSolid *support_b = new G4SubtractionSolid("Support2",support_a,innerSupport2);
+  G4Box *innerSupport4 = new G4Box("Inner Support4",(supportX/2. + 0.1*mm),(supportY-2*supportThickness)/2.,(supportZ-1.93*supportThickness)/2.); 
+  G4SubtractionSolid *support = new G4SubtractionSolid("Support",support_b,innerSupport4);
+  
+  G4LogicalVolume* support_LV
+    = new G4LogicalVolume(support,supportMaterial,"Support"); 
+  
+  fSupportPV
+    = new G4PVPlacement(0, G4ThreeVector(0., 0.,0.),
+		        support_LV, "Support", worldLV,false, 0, fCheckOverlaps);
+
+  
+  
+  ///// FLOOR AND ROOF
+  
+  G4int nBrickZ=11;
+  
+  G4int nBrickX_floor=8;//5;
+  G4int nBrickY_floor=10;//6;
+  G4VSolid* brick_floor_S[nBrickX_floor][nBrickY_floor];
+  G4LogicalVolume* brick_floor_LV[nBrickX_floor][nBrickY_floor];
+  G4VPhysicalVolume*   fBrick_floor_PV[nBrickX_floor][nBrickY_floor];
+  G4VPhysicalVolume*   fLead_floor_PV[nBrickX_floor][nBrickY_floor];
+  G4double positionX_floor = (-nBrickX_floor/2.)*brickX + brickX/2.;
+  G4double positionY_floor = (-nBrickY_floor/2.)*brickY + brickY/2.;
+  //G4double positionZ_floor = (-nBrickZ/2.)*brickX + brickZ/2.;
+  G4double positionZ_floor = -51*cm - brickZ/2.; // (-nBrickZ/2.)*brickX + brickZ/2.;
+
+
+  G4int nBrickX_roof=8;
+  G4int nBrickY_roof=10;
+  G4VSolid* brick_roof_S[nBrickX_roof][nBrickY_roof];
+  G4LogicalVolume* brick_roof_LV[nBrickX_roof][nBrickY_roof];
+  G4VPhysicalVolume*  fBrick_roof_PV[nBrickX_roof][nBrickY_roof];
+  G4VPhysicalVolume*   fLead_roof_PV[nBrickX_roof][nBrickY_roof];
+  G4double positionX_roof = (-nBrickX_roof/2.)*brickX + brickX/2.;
+  G4double positionY_roof = (-nBrickY_roof/2.)*brickY + brickY/2.;
+  //G4double positionZ_roof = (nBrickZ/2.+1/2.)*brickX - brickZ/2.;
+  G4double positionZ_roof = 51*cm + 75*cm + brickZ/2.;//(nBrickZ/2.+1/2.)*brickX - brickZ/2.;
+  
+
+
+  G4VSolid* lead_S[nBrickX_floor][nBrickY_floor];
+  G4LogicalVolume* lead_LV[nBrickX_floor][nBrickY_floor];
+  G4VSolid* opera_detectorS[nBrickX_floor][nBrickY_floor];
+  G4LogicalVolume* opera_detectorLV[nBrickX_floor][nBrickY_floor];                                   
+  G4VSolid* opera_filmS[nBrickX_floor][nBrickY_floor];
+  G4LogicalVolume* opera_filmLV[nBrickX_floor][nBrickY_floor];
+  G4VSolid* opera_emulsionS[nBrickX_floor][nBrickY_floor];                         
+  G4LogicalVolume* opera_emulsionLV[nBrickX_floor][nBrickY_floor];                                   
+  G4VSolid* opera_baseS[nBrickX_floor][nBrickY_floor];
+  G4LogicalVolume* opera_baseLV[nBrickX_floor][nBrickY_floor];
+  
+
+  G4VPhysicalVolume* fopera_floor_DetectorPV[nBrickX_floor][nBrickY_floor];  
+  G4VPhysicalVolume* fopera_floor_EmulsionTopPV[nBrickX_floor][nBrickY_floor];
+  G4VPhysicalVolume* fopera_floor_EmulsionBotPV[nBrickX_floor][nBrickY_floor];
+  G4VPhysicalVolume* flast_opera_floor_EmulsionTopPV[nBrickX_floor][nBrickY_floor];
+  G4VPhysicalVolume* flast_opera_floor_EmulsionBotPV[nBrickX_floor][nBrickY_floor];
+  G4VPhysicalVolume* fopera_floor_basePV[nBrickX_floor][nBrickY_floor];
+  G4VPhysicalVolume* flast_opera_floor_basePV[nBrickX_floor][nBrickY_floor];
+
+
+  G4VPhysicalVolume* fopera_roof_DetectorPV[nBrickX_roof][nBrickY_roof];                                     
+  G4VPhysicalVolume* fopera_roof_EmulsionTopPV[nBrickX_roof][nBrickY_roof];
+  G4VPhysicalVolume* fopera_roof_EmulsionBotPV[nBrickX_roof][nBrickY_roof];
+  G4VPhysicalVolume* flast_opera_roof_EmulsionTopPV[nBrickX_roof][nBrickY_roof];
+  G4VPhysicalVolume* flast_opera_roof_EmulsionBotPV[nBrickX_roof][nBrickY_roof]; 
+  G4VPhysicalVolume* fopera_roof_basePV[nBrickX_roof][nBrickY_roof];
+  G4VPhysicalVolume* flast_opera_roof_basePV[nBrickX_roof][nBrickY_roof];
+
+  
+  
+  for(G4int j=0; j<nBrickY_floor;j++){
+    for(G4int i=0; i<nBrickX_floor;i++){
+      
+      G4String ibrick_index_floor = "Brick_floor_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+      G4String ilead_index_floor = "Lead";//_floor_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+      G4String ibrick_index_roof = "Brick_roof_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+      G4String ilead_index_roof = "Lead";//_roof_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+      
+
+      ///// FLOOR
+      
+      brick_floor_S[i][j] = new G4Box(ibrick_index_floor, brickX/2., brickY/2., opera_cellThickness*opera_nFilm/2.);//brickZ/2.);                                                                                                                                                                                                             
+      brick_floor_LV[i][j]
+	= new G4LogicalVolume(brick_floor_S[i][j], defaultMaterial, ibrick_index_floor);
+      
+      fBrick_floor_PV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(positionX_floor, positionY_floor,positionZ_floor),
+			    brick_floor_LV[i][j],ibrick_index_floor, worldLV,
+			    false, 0, fCheckOverlaps);
+             
+      
+      opera_filmS[i][j]
+	= new G4Box("OperaFilm", opera_emuSizeX/2, opera_emuSizeX/2, opera_cellThickness/2.);
+      
+      opera_filmLV[i][j]
+      = new G4LogicalVolume(opera_filmS[i][j],defaultMaterial, "OperaFilm");
+      
+      new G4PVReplica("OperaFilm", opera_filmLV[i][j], brick_floor_LV[i][j],
+		      kZAxis, opera_nFilm, opera_cellThickness);
+      
+      
+      opera_emulsionS[i][j] 
+	= new G4Box("OperaEmulsion", opera_emuSizeX/2, opera_emuSizeY/2, opera_layerThickness/2);
+      
+      opera_emulsionLV[i][j]
+      = new G4LogicalVolume(opera_emulsionS[i][j], opera_emulsionMaterial, "Opera_Emulsion"); 
+      
+      fopera_floor_EmulsionTopPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness/2.),
+			    opera_emulsionLV[i][j], "OperaEmulsion", opera_filmLV[i][j],  
+			    false, 0, fCheckOverlaps);
+      
+      fopera_floor_EmulsionBotPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness/2.),
+			    opera_emulsionLV[i][j], "OperaEmulsion", opera_filmLV[i][j],  
+			    false, 0, fCheckOverlaps); 
+      
+      
+      opera_baseS[i][j] 
+	= new G4Box("OperaBase",opera_emuSizeX/2, opera_emuSizeY/2, opera_baseThickness/2);
+      
+      opera_baseLV[i][j]
+      = new G4LogicalVolume(opera_baseS[i][j], operabaseMaterial, "OperaBase"); 
+      
+      fopera_floor_basePV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness/2.),
+			    opera_baseLV[i][j], "OperaBase", opera_filmLV[i][j],false, 0, fCheckOverlaps);
+
+      
+      flast_opera_floor_EmulsionTopPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(positionX_floor, positionY_floor, positionZ_floor + opera_cellThickness*56/2. + opera_layerThickness/2.),
+			    opera_emulsionLV[i][j], "OperaEmulsion", worldLV,  
+			    false, 0, fCheckOverlaps);
+      
+      flast_opera_floor_EmulsionBotPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(positionX_floor, positionY_floor, positionZ_floor + opera_cellThickness*56/2. + opera_layerThickness*1.5 + opera_baseThickness), opera_emulsionLV[i][j], "OperaEmulsion", worldLV, false, 0, fCheckOverlaps);
+
+      flast_opera_floor_basePV[i][j]
+      = new G4PVPlacement(0, G4ThreeVector(positionX_floor, positionY_floor, positionZ_floor + opera_cellThickness*56/2. + opera_layerThickness + opera_baseThickness/2.), opera_baseLV[i][j], "OperaBase", worldLV,false, 0, fCheckOverlaps);
+      
+  
+      
+      lead_S[i][j] 
+	= new G4Box(ilead_index_floor, leadX/2., leadY/2., leadZ/2.);
+      
+      lead_LV[i][j]
+      = new G4LogicalVolume(lead_S[i][j], leadMaterial, ilead_index_floor);
+      
+      fLead_floor_PV[i][j]
+    = new G4PVPlacement(0, G4ThreeVector(0, 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness + leadZ/2.),
+    lead_LV[i][j], ilead_index_floor, opera_filmLV[i][j],false, 0, fCheckOverlaps);
+
+
+      ///// ROOF            
+      
+      brick_roof_S[i][j] = new G4Box(ibrick_index_roof, brickX/2., brickY/2., opera_cellThickness*opera_nFilm/2.);                                                                                                                                                                                                             
+      brick_roof_LV[i][j]
+	= new G4LogicalVolume(brick_roof_S[i][j], defaultMaterial, ibrick_index_roof);
+      
+      fBrick_roof_PV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(positionX_roof, positionY_roof,positionZ_roof),
+			    brick_roof_LV[i][j],ibrick_index_roof, worldLV,
+			    false, 0, fCheckOverlaps);
+
+      
+      new G4PVReplica("OperaFilm", opera_filmLV[i][j], brick_roof_LV[i][j],
+		      kZAxis, opera_nFilm, opera_cellThickness);
+      
+      
+      fopera_roof_EmulsionTopPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness/2.),
+			    opera_emulsionLV[i][j], "OperaEmulsion", opera_filmLV[i][j],  
+			    false, 0, fCheckOverlaps);
+      
+      fopera_roof_EmulsionBotPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness/2.),
+			    opera_emulsionLV[i][j], "OperaEmulsion", opera_filmLV[i][j],  
+			    false, 0, fCheckOverlaps); 
+      
+      
+      
+      fopera_roof_basePV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness/2.),
+			    opera_baseLV[i][j], "OperaBase", opera_filmLV[i][j],false, 0, fCheckOverlaps);
+
+      
+      flast_opera_roof_EmulsionTopPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(positionX_roof, positionY_roof, positionZ_roof + opera_cellThickness*56/2. + opera_layerThickness/2.),
+			    opera_emulsionLV[i][j], "OperaEmulsion", worldLV,  
+			    false, 0, fCheckOverlaps);
+      
+      flast_opera_roof_EmulsionBotPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(positionX_roof, positionY_roof, positionZ_roof + opera_cellThickness*56/2. + opera_layerThickness*1.5 + opera_baseThickness), opera_emulsionLV[i][j], "OperaEmulsion", worldLV, false, 0, fCheckOverlaps);
+
+      flast_opera_roof_basePV[i][j]
+      = new G4PVPlacement(0, G4ThreeVector(positionX_roof, positionY_roof, positionZ_roof + opera_cellThickness*56/2. + opera_layerThickness + opera_baseThickness/2.), opera_baseLV[i][j], "OperaBase", worldLV,false, 0, fCheckOverlaps);
+      
+  
+      
+      fLead_floor_PV[i][j]
+    = new G4PVPlacement(0, G4ThreeVector(0, 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness + leadZ/2.),
+    lead_LV[i][j], ilead_index_floor, opera_filmLV[i][j],false, 0, fCheckOverlaps);
+
+
+      positionX_floor += brickX;
+      positionX_roof += brickX;
+    }
+    positionY_floor += brickY;
+    positionX_floor = positionX_floor -nBrickX_floor*brickX;
+    positionY_roof += brickY;
+    positionX_roof = positionX_roof -nBrickX_roof*brickX;
+  }
+  
+  
+  // Side1 and Side 2   ///////////////////////////////////////////////////////////
+  
+  
+  G4int nBrickZ_side1=15;//6;
+  G4int nBrickY_side1=10;//6;
+  G4VSolid* brick_side1_S[nBrickZ_side1][nBrickY_side1];
+  G4LogicalVolume* brick_side1_LV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume*  fBrick_side1_PV[nBrickZ_side1][nBrickY_side1];
+  G4VSolid* lead_side1_S[nBrickZ_side1][nBrickY_side1];
+  G4LogicalVolume* lead_side1_LV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume*   fLead_side1_PV[nBrickZ_side1][nBrickY_side1];
+  G4double positionX_side1 = (-nBrickX_floor/2.)*brickX - brickZ/2.;
+  G4double positionY_side1 = (-nBrickY_side1/2.)*brickY + brickY/2.;
+  G4double positionZ_side1 = positionZ_floor + (brickX-brickZ)/2.;//(-nBrickZ_side1/2.)*brickX + brickX/2.;
+
+  G4VSolid* brick_side2_S[nBrickZ_side1][nBrickY_side1];
+  G4LogicalVolume* brick_side2_LV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume*  fBrick_side2_PV[nBrickZ_side1][nBrickY_side1];
+  G4VSolid* lead_side2_S[nBrickZ_side1][nBrickY_side1];
+  G4LogicalVolume* lead_side2_LV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume*   fLead_side2_PV[nBrickZ_side1][nBrickY_side1];
+  G4double positionX_side2 = (nBrickX_floor/2.)*brickX + brickZ/2.;
+
+  G4VSolid* lead_1s_S[nBrickZ_side1][nBrickY_side1];
+  G4LogicalVolume* lead_1s_LV[nBrickZ_side1][nBrickY_side1];
+  G4VSolid* opera_1s_detectorS[nBrickZ_side1][nBrickY_side1];
+  G4LogicalVolume* opera_1s_detectorLV[nBrickZ_side1][nBrickY_side1];                                   
+  G4VSolid* opera_1s_filmS[nBrickZ_side1][nBrickY_side1];
+  G4LogicalVolume* opera_1s_filmLV[nBrickZ_side1][nBrickY_side1];
+  G4VSolid* opera_1s_emulsionS[nBrickZ_side1][nBrickY_side1];                         
+  G4LogicalVolume* opera_1s_emulsionLV[nBrickZ_side1][nBrickY_side1];                                   
+  G4VSolid* opera_1s_baseS[nBrickZ_side1][nBrickY_side1];
+  G4LogicalVolume* opera_1s_baseLV[nBrickZ_side1][nBrickY_side1];
+
+  G4VPhysicalVolume* fopera_side1_DetectorPV[nBrickZ_side1][nBrickY_side1];  
+  G4VPhysicalVolume* fopera_side1_EmulsionTopPV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume* fopera_side1_EmulsionBotPV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume* flast_opera_side1_EmulsionTopPV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume* flast_opera_side1_EmulsionBotPV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume* fopera_side1_basePV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume* flast_opera_side1_basePV[nBrickZ_side1][nBrickY_side1];
+
+
+  G4VPhysicalVolume* fopera_side2_DetectorPV[nBrickZ_side1][nBrickY_side1];  
+  G4VPhysicalVolume* fopera_side2_EmulsionTopPV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume* fopera_side2_EmulsionBotPV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume* flast_opera_side2_EmulsionTopPV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume* flast_opera_side2_EmulsionBotPV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume* fopera_side2_basePV[nBrickZ_side1][nBrickY_side1];
+  G4VPhysicalVolume* flast_opera_side2_basePV[nBrickZ_side1][nBrickY_side1];
+
+  G4RotationMatrix *rot  = new G4RotationMatrix();
+  rot->rotateY(-90*deg);
+  
+  for(G4int j=0; j<nBrickY_side1;j++){
+    for(G4int i=0; i<nBrickZ_side1;i++){
+      
+      G4String ibrick_index_side1 = "Brick_side1_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+      G4String ilead_index_side1 = "Lead";//_side1_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+
+      ///// Side 1
+    
+      brick_side1_S[i][j] = new G4Box(ibrick_index_side1, brickX/2., brickY/2., opera_cellThickness*opera_nFilm/2.);                                                                                                                                                                                                             
+      brick_side1_LV[i][j]
+	= new G4LogicalVolume(brick_side1_S[i][j], defaultMaterial, ibrick_index_side1);
+      
+      fBrick_side1_PV[i][j]
+	= new G4PVPlacement(rot, G4ThreeVector(positionX_side1, positionY_side1,positionZ_side1),
+			    brick_side1_LV[i][j],ibrick_index_side1, worldLV,
+			    false, 0, fCheckOverlaps);
+
+      
+      opera_1s_filmS[i][j]
+	= new G4Box("OperaFilm", opera_emuSizeX/2, opera_emuSizeX/2, opera_cellThickness/2.);
+      
+      opera_1s_filmLV[i][j]
+	= new G4LogicalVolume(opera_1s_filmS[i][j],defaultMaterial, "OperaFilm");
+      
+      new G4PVReplica("OperaFilm", opera_1s_filmLV[i][j], brick_side1_LV[i][j],
+		      kZAxis, opera_nFilm, opera_cellThickness);
+      
+      
+      opera_1s_emulsionS[i][j] 
+	= new G4Box("OperaEmulsion", opera_emuSizeX/2, opera_emuSizeY/2, opera_layerThickness/2);
+      
+      opera_1s_emulsionLV[i][j]
+	= new G4LogicalVolume(opera_1s_emulsionS[i][j], opera_emulsionMaterial, "Opera_Emulsion"); 
+      
+      fopera_side1_EmulsionTopPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness/2.),
+			    opera_1s_emulsionLV[i][j], "OperaEmulsion", opera_1s_filmLV[i][j],  
+			    false, 0, fCheckOverlaps);
+      
+      fopera_side1_EmulsionBotPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness/2.),
+			    opera_1s_emulsionLV[i][j], "OperaEmulsion", opera_1s_filmLV[i][j],  
+			    false, 0, fCheckOverlaps); 
+      
+      
+      opera_1s_baseS[i][j] 
+	= new G4Box("OperaBase",opera_emuSizeX/2, opera_emuSizeY/2, opera_baseThickness/2);
+      
+      opera_1s_baseLV[i][j]
+	= new G4LogicalVolume(opera_1s_baseS[i][j], operabaseMaterial, "OperaBase"); 
+      
+      fopera_side1_basePV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness/2.),
+			    opera_1s_baseLV[i][j], "OperaBase", opera_1s_filmLV[i][j],false, 0, fCheckOverlaps);
+      
+      
+      flast_opera_side1_EmulsionTopPV[i][j]
+	= new G4PVPlacement(rot, G4ThreeVector(positionX_side1 + opera_cellThickness*56/2. + opera_layerThickness/2., positionY_side1, positionZ_side1),
+			    opera_1s_emulsionLV[i][j], "OperaEmulsion", worldLV,  
+			    false, 0, fCheckOverlaps);
+      
+      flast_opera_side1_EmulsionBotPV[i][j]
+	= new G4PVPlacement(rot, G4ThreeVector(positionX_side1 + opera_cellThickness*56/2. + opera_layerThickness*1.5 + opera_baseThickness, positionY_side1, positionZ_side1), opera_1s_emulsionLV[i][j], "OperaEmulsion", worldLV, false, 0, fCheckOverlaps);
+      
+      flast_opera_side1_basePV[i][j]
+	= new G4PVPlacement(rot, G4ThreeVector(positionX_side1 + opera_cellThickness*56/2. + opera_layerThickness + opera_baseThickness/2., positionY_side1, positionZ_side1), opera_1s_baseLV[i][j], "OperaBase", worldLV,false, 0, fCheckOverlaps);
+      
+      
+      lead_1s_S[i][j] 
+	= new G4Box(ilead_index_side1, leadX/2., leadY/2., leadZ/2.);
+      
+      lead_1s_LV[i][j]
+	= new G4LogicalVolume(lead_1s_S[i][j], leadMaterial, ilead_index_side1);
+      
+      fLead_side1_PV[i][j]
+    = new G4PVPlacement(0, G4ThreeVector(0, 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness + leadZ/2.),
+    lead_1s_LV[i][j], ilead_index_side1, opera_1s_filmLV[i][j],false, 0, fCheckOverlaps);
+      
+
+      // Side 2    /////////////////////////////////////////////////////////////
+
+      G4String ibrick_index_side2 = "Brick_side2_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+      G4String ilead_index_side2 = "Lead";//_side2_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+      
+    
+      brick_side2_S[i][j] = new G4Box(ibrick_index_side2, brickX/2., brickY/2., opera_cellThickness*opera_nFilm/2.);                                                                                                                                                                                                             
+      brick_side2_LV[i][j]
+	= new G4LogicalVolume(brick_side2_S[i][j], defaultMaterial, ibrick_index_side2);
+      
+      fBrick_side2_PV[i][j]
+	= new G4PVPlacement(rot, G4ThreeVector(positionX_side2, positionY_side1,positionZ_side1),
+			    brick_side2_LV[i][j],ibrick_index_side2, worldLV,
+			    false, 0, fCheckOverlaps);
+
+      
+      new G4PVReplica("OperaFilm", opera_1s_filmLV[i][j], brick_side2_LV[i][j],
+		      kZAxis, opera_nFilm, opera_cellThickness);
+      
+      
+      
+      fopera_side2_EmulsionTopPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness/2.),
+			    opera_1s_emulsionLV[i][j], "OperaEmulsion", opera_1s_filmLV[i][j],  
+			    false, 0, fCheckOverlaps);
+      
+      fopera_side2_EmulsionBotPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness/2.),
+			    opera_1s_emulsionLV[i][j], "OperaEmulsion", opera_1s_filmLV[i][j],  
+			    false, 0, fCheckOverlaps); 
+      
+      
+      fopera_side2_basePV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness/2.),
+			    opera_1s_baseLV[i][j], "OperaBase", opera_1s_filmLV[i][j],false, 0, fCheckOverlaps);
+      
+      
+      flast_opera_side2_EmulsionTopPV[i][j]
+	= new G4PVPlacement(rot, G4ThreeVector(positionX_side2 + opera_cellThickness*56/2. + opera_layerThickness/2., positionY_side1, positionZ_side1),
+			    opera_1s_emulsionLV[i][j], "OperaEmulsion", worldLV,  
+			    false, 0, fCheckOverlaps);
+      
+      flast_opera_side2_EmulsionBotPV[i][j]
+	= new G4PVPlacement(rot, G4ThreeVector(positionX_side2 + opera_cellThickness*56/2. + opera_layerThickness*1.5 + opera_baseThickness, positionY_side1, positionZ_side1), opera_1s_emulsionLV[i][j], "OperaEmulsion", worldLV, false, 0, fCheckOverlaps);
+      
+      flast_opera_side2_basePV[i][j]
+	= new G4PVPlacement(rot, G4ThreeVector(positionX_side2 + opera_cellThickness*56/2. + opera_layerThickness + opera_baseThickness/2., positionY_side1, positionZ_side1), opera_1s_baseLV[i][j], "OperaBase", worldLV,false, 0, fCheckOverlaps);
+      
+      
+      fLead_side2_PV[i][j]
+    = new G4PVPlacement(0, G4ThreeVector(0, 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness + leadZ/2.),
+    lead_1s_LV[i][j], ilead_index_side1, opera_1s_filmLV[i][j],false, 0, fCheckOverlaps);
+        
+    
+    positionZ_side1 += brickX;
+    }
+    positionY_side1 += brickY;
+    positionZ_side1 = positionZ_side1 -nBrickZ_side1*brickX;
+    }
+  
+  
+  
+  // SIDE 3 AND 4  /////////////////////////////////////////////////////
+  
+
+
+  G4int nBrickZ_side3=15;//6;
+  G4int nBrickX_side3=12;//8;
+  G4VSolid* brick_side3_S[nBrickZ_side3][nBrickX_side3];
+  G4LogicalVolume* brick_side3_LV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume*  fBrick_side3_PV[nBrickZ_side3][nBrickX_side3];
+  G4VSolid* lead_side3_S[nBrickZ_side3][nBrickX_side3];
+  G4LogicalVolume* lead_side3_LV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume*   fLead_side3_PV[nBrickZ_side3][nBrickX_side3];
+  G4double positionY_side3 = (-nBrickY_floor/2.)*brickY - brickZ/2.;
+  G4double positionX_side3 = (-nBrickX_floor/2.)*brickX + brickY/2. - (nBrickX_side3*brickY-nBrickX_floor*brickX)/2.;
+  //G4double positionZ_side3 = (-nBrickZ_side3/2.)*brickX + brickX/2.;
+  G4double positionZ_side3 = positionZ_floor + (brickX-brickZ)/2.;//(-nBrickZ_side1/2.)*brickX + brickX/2.;
+
+  G4VSolid* brick_side4_S[nBrickZ_side3][nBrickX_side3];
+  G4LogicalVolume* brick_side4_LV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume*  fBrick_side4_PV[nBrickZ_side3][nBrickX_side3];
+  G4VSolid* lead_side4_S[nBrickZ_side3][nBrickX_side3];
+  G4LogicalVolume* lead_side4_LV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume*   fLead_side4_PV[nBrickZ_side3][nBrickX_side3];
+  G4double positionY_side4 = (nBrickY_floor/2.)*brickY + brickZ/2.;
+
+  G4VSolid* lead_3s_S[nBrickZ_side3][nBrickX_side3];
+  G4LogicalVolume* lead_3s_LV[nBrickZ_side3][nBrickX_side3];
+  G4VSolid* opera_3s_detectorS[nBrickZ_side3][nBrickX_side3];
+  G4LogicalVolume* opera_3s_detectorLV[nBrickZ_side3][nBrickX_side3];                                   
+  G4VSolid* opera_3s_filmS[nBrickZ_side3][nBrickX_side3];
+  G4LogicalVolume* opera_3s_filmLV[nBrickZ_side3][nBrickX_side3];
+  G4VSolid* opera_3s_emulsionS[nBrickZ_side3][nBrickX_side3];                         
+  G4LogicalVolume* opera_3s_emulsionLV[nBrickZ_side3][nBrickX_side3];                                   
+  G4VSolid* opera_3s_baseS[nBrickZ_side3][nBrickX_side3];
+  G4LogicalVolume* opera_3s_baseLV[nBrickZ_side3][nBrickX_side3];
+
+  G4VPhysicalVolume* fopera_side3_DetectorPV[nBrickZ_side3][nBrickX_side3];  
+  G4VPhysicalVolume* fopera_side3_EmulsionTopPV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume* fopera_side3_EmulsionBotPV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume* flast_opera_side3_EmulsionTopPV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume* flast_opera_side3_EmulsionBotPV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume* fopera_side3_basePV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume* flast_opera_side3_basePV[nBrickZ_side3][nBrickX_side3];
+
+
+  G4VPhysicalVolume* fopera_side4_DetectorPV[nBrickZ_side3][nBrickX_side3];  
+  G4VPhysicalVolume* fopera_side4_EmulsionTopPV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume* fopera_side4_EmulsionBotPV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume* flast_opera_side4_EmulsionTopPV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume* flast_opera_side4_EmulsionBotPV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume* fopera_side4_basePV[nBrickZ_side3][nBrickX_side3];
+  G4VPhysicalVolume* flast_opera_side4_basePV[nBrickZ_side3][nBrickX_side3];
+
+
+  G4RotationMatrix *rot2  = new G4RotationMatrix();
+  rot2->rotateX(90*deg);
+  rot2->rotateY(0*deg);
+  rot2->rotateZ(90*deg);
+
+  for(G4int j=0; j<nBrickX_side3;j++){
+    for(G4int i=0; i<nBrickZ_side3;i++){
+      
+      G4String ibrick_index_side3 = "Brick_side3_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+      G4String ilead_index_side3 = "Lead";//_side3_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+      
+      //G4cout << i << " " << innerRadius << " " << outerRadius << G4endl;
+    
+      brick_side3_S[i][j] = new G4Box(ibrick_index_side3, brickX/2., brickY/2., opera_cellThickness*opera_nFilm/2.);                                                                                                                                                                                                             
+      brick_side3_LV[i][j]
+	= new G4LogicalVolume(brick_side3_S[i][j], defaultMaterial, ibrick_index_side3);
+      
+      fBrick_side3_PV[i][j]
+	= new G4PVPlacement(rot2, G4ThreeVector(positionX_side3, positionY_side3,positionZ_side3),
+			    brick_side3_LV[i][j],ibrick_index_side3, worldLV,
+			    false, 0, fCheckOverlaps);
+
+
+      opera_3s_filmS[i][j]
+	= new G4Box("OperaFilm", opera_emuSizeX/2, opera_emuSizeX/2, opera_cellThickness/2.);
+      
+      opera_3s_filmLV[i][j]
+	= new G4LogicalVolume(opera_3s_filmS[i][j],defaultMaterial, "OperaFilm");
+      
+      new G4PVReplica("OperaFilm", opera_3s_filmLV[i][j], brick_side3_LV[i][j],
+		      kZAxis, opera_nFilm, opera_cellThickness);
+      
+      
+      opera_3s_emulsionS[i][j] 
+	= new G4Box("OperaEmulsion", opera_emuSizeX/2, opera_emuSizeY/2, opera_layerThickness/2);
+      
+      opera_3s_emulsionLV[i][j]
+	= new G4LogicalVolume(opera_3s_emulsionS[i][j], opera_emulsionMaterial, "Opera_Emulsion"); 
+      
+      fopera_side3_EmulsionTopPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness/2.),
+			    opera_3s_emulsionLV[i][j], "OperaEmulsion", opera_3s_filmLV[i][j],  
+			    false, 0, fCheckOverlaps);
+      
+      fopera_side3_EmulsionBotPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness/2.),
+			    opera_3s_emulsionLV[i][j], "OperaEmulsion", opera_3s_filmLV[i][j],  
+			    false, 0, fCheckOverlaps); 
+      
+      
+      opera_3s_baseS[i][j] 
+	= new G4Box("OperaBase",opera_emuSizeX/2, opera_emuSizeY/2, opera_baseThickness/2);
+      
+      opera_3s_baseLV[i][j]
+	= new G4LogicalVolume(opera_3s_baseS[i][j], operabaseMaterial, "OperaBase"); 
+      
+      fopera_side3_basePV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness/2.),
+			    opera_3s_baseLV[i][j], "OperaBase", opera_3s_filmLV[i][j],false, 0, fCheckOverlaps);
+      
+      
+      flast_opera_side3_EmulsionTopPV[i][j]
+	= new G4PVPlacement(rot2, G4ThreeVector(positionX_side3, positionY_side3 + opera_cellThickness*56/2. + opera_layerThickness/2.,positionZ_side3),
+			    opera_3s_emulsionLV[i][j], "OperaEmulsion", worldLV,  
+			    false, 0, fCheckOverlaps);
+      
+      flast_opera_side3_EmulsionBotPV[i][j]
+	= new G4PVPlacement(rot2, G4ThreeVector(positionX_side3, positionY_side3 + opera_cellThickness*56/2. + opera_layerThickness*1.5 + opera_baseThickness,positionZ_side3), opera_3s_emulsionLV[i][j], "OperaEmulsion", worldLV, false, 0, fCheckOverlaps);
+      
+      flast_opera_side3_basePV[i][j]
+	= new G4PVPlacement(rot2, G4ThreeVector(positionX_side3, positionY_side3 + opera_cellThickness*56/2. + opera_layerThickness + opera_baseThickness/2.,positionZ_side3), opera_3s_baseLV[i][j], "OperaBase", worldLV,false, 0, fCheckOverlaps);
+      
+      
+      lead_3s_S[i][j] 
+	= new G4Box(ilead_index_side3, leadX/2., leadY/2., leadZ/2.);
+      
+      lead_3s_LV[i][j]
+	= new G4LogicalVolume(lead_3s_S[i][j], leadMaterial, ilead_index_side3);
+      
+      fLead_side3_PV[i][j]
+    = new G4PVPlacement(0, G4ThreeVector(0, 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness + leadZ/2.),
+    lead_3s_LV[i][j], ilead_index_side3, opera_3s_filmLV[i][j],false, 0, fCheckOverlaps);
+      
+      
+
+
+      //Side 4        ///////////////////////////////////////////////////////////
+
+      G4String ibrick_index_side4 = "Brick_side4_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+      G4String ilead_index_side4 = "Lead";//_side4_"+G4UIcommand::ConvertToString(j)+"_"+G4UIcommand::ConvertToString(i);
+      
+      //G4cout << i << " " << innerRadius << " " << outerRadius << G4endl;
+    
+      brick_side4_S[i][j] = new G4Box(ibrick_index_side4, brickX/2., brickY/2., opera_cellThickness*opera_nFilm/2.);                                                                                                                                                                                                             
+      brick_side4_LV[i][j]
+	= new G4LogicalVolume(brick_side4_S[i][j], defaultMaterial, ibrick_index_side4);
+      
+      fBrick_side4_PV[i][j]
+	= new G4PVPlacement(rot2, G4ThreeVector(positionX_side3, positionY_side4,positionZ_side3),
+			    brick_side4_LV[i][j],ibrick_index_side4, worldLV,
+			    false, 0, fCheckOverlaps);
+
+      
+      new G4PVReplica("OperaFilm", opera_3s_filmLV[i][j], brick_side4_LV[i][j],
+		      kZAxis, opera_nFilm, opera_cellThickness);
+      
+      
+      fopera_side4_EmulsionTopPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness/2.),
+			    opera_3s_emulsionLV[i][j], "OperaEmulsion", opera_3s_filmLV[i][j],  
+			    false, 0, fCheckOverlaps);
+      
+      fopera_side4_EmulsionBotPV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness/2.),
+			    opera_3s_emulsionLV[i][j], "OperaEmulsion", opera_3s_filmLV[i][j],  
+			    false, 0, fCheckOverlaps);
+      
+      
+      fopera_side4_basePV[i][j]
+	= new G4PVPlacement(0, G4ThreeVector(0., 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness/2.),
+			    opera_3s_baseLV[i][j], "OperaBase", opera_3s_filmLV[i][j],false, 0, fCheckOverlaps);
+      
+      
+      flast_opera_side4_EmulsionTopPV[i][j]
+	= new G4PVPlacement(rot2, G4ThreeVector(positionX_side3, positionY_side4 + opera_cellThickness*56/2. + opera_layerThickness/2.,positionZ_side3),
+			    opera_3s_emulsionLV[i][j], "OperaEmulsion", worldLV,  
+			    false, 0, fCheckOverlaps);
+      
+      flast_opera_side4_EmulsionBotPV[i][j]
+	= new G4PVPlacement(rot2, G4ThreeVector(positionX_side3, positionY_side4 + opera_cellThickness*56/2. + opera_layerThickness*1.5 + opera_baseThickness,positionZ_side3), opera_3s_emulsionLV[i][j], "OperaEmulsion", worldLV, false, 0, fCheckOverlaps);
+      
+      flast_opera_side4_basePV[i][j]
+	= new G4PVPlacement(rot2, G4ThreeVector(positionX_side3, positionY_side4 + opera_cellThickness*56/2. + opera_layerThickness + opera_baseThickness/2.,positionZ_side3), opera_3s_baseLV[i][j], "OperaBase", worldLV,false, 0, fCheckOverlaps);
+      
+      
+      fLead_side4_PV[i][j]
+    = new G4PVPlacement(0, G4ThreeVector(0, 0.,-opera_cellThickness/2. + opera_layerThickness + opera_baseThickness + opera_layerThickness + leadZ/2.),
+    lead_3s_LV[i][j], ilead_index_side3, opera_3s_filmLV[i][j],false, 0, fCheckOverlaps);
+
+      
+    
+    positionZ_side3 += brickX;
+    }
+    positionX_side3 += brickY;
+    positionZ_side3 = positionZ_side3 -nBrickZ_side3*brickX;
+  }
+  
+
+
+
+  
+
+
+
+  
+  //
+  // Shielding Poly
+  //
+  
+  G4Box *outerBox = new G4Box("Outer Box",boxX/2.,boxY/2.,boxZ/2.);
+  G4Box *innerBox = new G4Box("Inner Box",(boxX-2*boxThickness)/2.,(boxY-2*boxThickness)/2.,(boxZ-2*boxThickness)/2.);
+  G4SubtractionSolid *polyethilene_shielding_a = new G4SubtractionSolid("Polyethilene_Shielding",outerBox,innerBox);
+  //G4Box *innerBox2 = new G4Box("Inner Box2",(boxX-2*boxThickness)/2.,(boxY-2*boxThickness)/2.,(2*boxThickness)/2.);
+  G4Box *innerBox2 = new G4Box("Inner Box2",(boxX)/2.+0.1*mm,(boxY)/2.+0.1*mm,(boxThickness)/2.+0.1*mm);
+  G4SubtractionSolid *polyethilene_shielding =
+    new G4SubtractionSolid("Polyethilene_Shielding",polyethilene_shielding_a,innerBox2,0, G4ThreeVector(0.,0.,(boxZ-boxThickness)/2.));
+  
+  G4LogicalVolume* polyethilene_shieldingLV
+    = new G4LogicalVolume(polyethilene_shielding,plateMaterial,"Polyethilene_Shielding"); 
+  
+  fPolyethilenePV
+    = new G4PVPlacement(0, G4ThreeVector(0., 0.,0.),
+		        polyethilene_shieldingLV, "Polyethilene_Shielding", worldLV,false, 0, fCheckOverlaps);
+
+
+
+
+
+  //                               
+  // Shielding Bot Polyethilene Plate 
+  //
+  
+  G4VSolid* plateBot 
+    = new G4Box("Bottom Polyethylene",(plateBotX)/2.,(plateBotY)/2.,((plateBotThickness)*NplatesBot)/2.);
+                         
+  G4LogicalVolume* plateBotLV
+    = new G4LogicalVolume(plateBot, defaultMaterial, "Bottom Polyethylene"); 
+  
+  fplateBotPV
+    = new G4PVPlacement(0, G4ThreeVector(0., 0.,-supportZ/2.-brickZ -(plateBotThickness*NplatesBot)/2.),
+			plateBotLV, "Bottom Polyethylene", worldLV,  
+		 false, 0, fCheckOverlaps); 
+                               
+  
+  
+  G4VSolid* bot_plate 
+    = new G4Box("Bottom Poyethylene",(plateBotX)/2.,(plateBotY)/2.,(plateBotThickness)/2.);
+  
+  G4LogicalVolume* bot_shieldingLV
+    = new G4LogicalVolume(bot_plate,plateMaterial,"Bottom Polyethylene"); 
+  
+  new G4PVReplica("Bottom Plate", bot_shieldingLV, plateBotLV,
+		  kZAxis, NplatesBot, plateBotThickness);
+
+  // end shield 
+
+
+
+  //                               
+  // Shielding Top Polyethylene Plate 
+  //
+  
+  G4VSolid* plateTop 
+    = new G4Box("Top Polyethylene",(plateTopX)/2.,(plateTopY)/2.,((plateTopThickness)*NplatesTop)/2.);
+                         
+  G4LogicalVolume* plateTopLV
+    = new G4LogicalVolume(plateTop, defaultMaterial, "Top Polyethylene"); 
+                                   
+  fplateTopPV
+    = new G4PVPlacement(0, G4ThreeVector(0., 0.,supportZ/2.+ (plateTopThickness*NplatesTop)/2.),
+                 plateTopLV, "Top Polyethylene", worldLV,  
+		 false, 0, fCheckOverlaps); 
+                                 
+
+
+  G4VSolid* top_plate 
+    = new G4Box("Top Polyethylene",(plateTopX)/2.,(plateTopY)/2.,(plateTopThickness)/2.);
+
+  G4LogicalVolume* top_shieldingLV
+    = new G4LogicalVolume(top_plate,plateMaterial,"Top Polyethylene"); 
+
+   new G4PVReplica("Top Plate", top_shieldingLV, plateTopLV,
+		  kZAxis, NplatesTop, plateTopThickness);
+        
+
+  
+   ///// Draw Experimental Setup /////
+  
+   //                                        
+   // Visualization attributes
+   //
+   
+   worldLV->SetVisAttributes (G4VisAttributes::Invisible);
+   
+   G4VisAttributes* emulsionVisAtt= new G4VisAttributes();
+   emulsionVisAtt->SetVisibility(true);
+   emulsionVisAtt->SetColour(G4Colour::Yellow());
+   emulsionVisAtt->SetForceSolid(true);
+   emulsionLV->SetVisAttributes(emulsionVisAtt);
+   
+   G4VisAttributes* baseVisAtt= new G4VisAttributes();
+   baseVisAtt->SetVisibility(true);
+   baseVisAtt->SetColour(G4Colour::White());
+   baseVisAtt->SetForceSolid(true);
+   baseLV->SetVisAttributes(baseVisAtt);
+   
+   G4VisAttributes* supportVisAtt= new G4VisAttributes();
+   supportVisAtt->SetVisibility(true);
+   supportVisAtt->SetColour(G4Colour::Blue());
+   supportVisAtt->SetForceSolid(true);
+   support_LV->SetVisAttributes(supportVisAtt);
+   
+   
+   G4VisAttributes* shieldingVisAtt= new G4VisAttributes();
+   shieldingVisAtt->SetVisibility(true);
+   shieldingVisAtt->SetColour(G4Colour::Cyan());
+   shieldingVisAtt->SetForceSolid(true);
+   polyethilene_shieldingLV->SetVisAttributes(shieldingVisAtt);
+   shieldingVisAtt->SetForceWireframe(true);
+   top_shieldingLV->SetVisAttributes(shieldingVisAtt);
+   bot_shieldingLV->SetVisAttributes(shieldingVisAtt);
+   
+   G4VisAttributes* nitrogen_boxVisAtt= new G4VisAttributes();
+   nitrogen_boxVisAtt->SetVisibility(true);
+   nitrogen_boxVisAtt->SetColour(G4Colour::Red());
+   //nitrogen_boxVisAtt->SetForceSolid(true);
+   nitrogen_box_LV->SetVisAttributes(nitrogen_boxVisAtt);
+
+   G4VisAttributes* cooling_boxVisAtt= new G4VisAttributes();
+   cooling_boxVisAtt->SetVisibility(true);
+   cooling_boxVisAtt->SetColour(G4Colour::Brown());
+   cooling_box_LV->SetVisAttributes(cooling_boxVisAtt);
+   
+
+   
+   G4VisAttributes* brickVisAtt= new G4VisAttributes();
+   G4VisAttributes* leadVisAtt= new G4VisAttributes();
+   G4VisAttributes* opera_baseVisAtt= new G4VisAttributes();
+   opera_baseVisAtt->SetColour(G4Colour::White());
+   opera_baseVisAtt->SetForceSolid(true);
+
+    
+   for(G4int j=0; j<nBrickY_floor;j++){
+     for(G4int i=0; i<nBrickX_floor;i++){
+       brickVisAtt->SetVisibility(true);
+       brickVisAtt->SetColour(G4Colour::Grey());
+       leadVisAtt->SetColour(G4Colour::Grey());
+       brickVisAtt->SetForceWireframe(true);
+       leadVisAtt->SetForceSolid(true);
+       //lead_LV[i][j]->SetVisAttributes(leadVisAtt);
+       // opera_emulsionLV[i][j]->SetVisAttributes(emulsionVisAtt);
+       // opera_baseLV[i][j]->SetVisAttributes(opera_baseVisAtt);
+       opera_emulsionLV[i][j]->SetVisAttributes (G4VisAttributes::Invisible);
+       opera_filmLV[i][j]->SetVisAttributes (G4VisAttributes::Invisible);
+       opera_baseLV[i][j]->SetVisAttributes (G4VisAttributes::Invisible);
+       lead_LV[i][j]->SetVisAttributes (G4VisAttributes::Invisible);       
+     }
+   }
+ 
+    for(G4int j=0; j<nBrickY_side1;j++){
+      for(G4int i=0; i<nBrickZ_side1;i++){
+	brickVisAtt->SetVisibility(true);
+	brickVisAtt->SetColour(G4Colour::Red());
+	leadVisAtt->SetColour(G4Colour::Red());
+	brickVisAtt->SetForceWireframe(true);
+	leadVisAtt->SetForceSolid(true);
+	//opera_1s_emulsionLV[i][j]->SetVisAttributes(emulsionVisAtt);
+	//opera_1s_baseLV[i][j]->SetVisAttributes(opera_baseVisAtt);
+	//lead_1s_LV[i][j]->SetVisAttributes(leadVisAtt);
+	//brick_1s_LV[i][j]->SetVisAttributes (G4VisAttributes::Invisible);
+        lead_1s_LV[i][j]->SetVisAttributes(G4VisAttributes::Invisible);
+	opera_1s_filmLV[i][j]->SetVisAttributes(G4VisAttributes::Invisible);
+	opera_1s_emulsionLV[i][j]->SetVisAttributes(G4VisAttributes::Invisible);
+	opera_1s_baseLV[i][j]->SetVisAttributes(G4VisAttributes::Invisible);
+      }
+    }
+    
+    
+    for(G4int j=0; j<nBrickX_side3;j++){
+      for(G4int i=0; i<nBrickZ_side3;i++){
+	brickVisAtt->SetVisibility(true);
+	brickVisAtt->SetColour(G4Colour::Grey());
+	leadVisAtt->SetColour(G4Colour::Grey());
+	brickVisAtt->SetForceWireframe(true);
+	leadVisAtt->SetForceSolid(true);
+	//opera_3s_emulsionLV[i][j]->SetVisAttributes(emulsionVisAtt);
+	//opera_3s_baseLV[i][j]->SetVisAttributes(opera_baseVisAtt);
+	//lead_3s_LV[i][j]->SetVisAttributes(leadVisAtt);
+	lead_3s_LV[i][j]->SetVisAttributes(G4VisAttributes::Invisible);
+	opera_3s_filmLV[i][j]->SetVisAttributes(G4VisAttributes::Invisible);
+	opera_3s_emulsionLV[i][j]->SetVisAttributes(G4VisAttributes::Invisible);
+	opera_3s_baseLV[i][j]->SetVisAttributes(G4VisAttributes::Invisible);	
+      }
+      }
+   
+   
+   return worldPV;
+
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void DetectorConstruction::PrintDetectorParameters()
+{
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -1,0 +1,77 @@
+# $Id: run.mac 68015 2013-03-13 13:27:27Z gcosmo $
+#
+# Macro file for "AnaEx01.cc"
+# 
+# can be run in batch, without graphic
+# or interactively: Idle> /control/execute run.mac
+#
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
+/gps/particle gamma
+
+/gps/pos/type Plane
+/gps/pos/shape Circle
+#/gps/pos/centre 0. 0. 5.53 mm
+/gps/pos/centre 0. 0. 2.525 mm
+#/gps/pos/halfx 1 cm
+#/gps/pos/halfy 1 cm
+/gps/pos/radius 0.5 mm
+
+/gps/ang/type iso
+/gps/ang/mintheta  0.
+/gps/ang/maxtheta  1.571
+#/gps/ang/surfnorm
+
+/gps/ene/type User
+/gps/hist/type energy
+
+
+# Gamma-Decay Am-241
+/gps/hist/point 0.000000 0. 	
+/gps/hist/point 0.002000 0. 	
+/gps/hist/point 0.040000 0. 	
+/gps/hist/point 0.006000 0.
+/gps/hist/point 0.008000 0. 	
+#/gps/hist/point 0.008700 0.37467
+/gps/hist/point 0.009000 0.36219 	
+/gps/hist/point 0.010000 0.26614
+/gps/hist/point 0.011000 0.21239
+/gps/hist/point 0.012000 0.11760
+/gps/hist/point 0.013000 0.08577
+/gps/hist/point 0.014000 0.05974
+/gps/hist/point 0.015000 0.05186
+/gps/hist/point 0.016000 0.05187
+/gps/hist/point 0.018000 0.06000
+/gps/hist/point 0.020000 0.06214
+/gps/hist/point 0.022000 0.05427
+/gps/hist/point 0.024000 0.06774
+/gps/hist/point 0.026000 0.11254
+/gps/hist/point 0.027000 0.09994
+/gps/hist/point 0.028000 0.05667
+/gps/hist/point 0.030000 0.04280
+/gps/hist/point 0.032000 0.05027
+/gps/hist/point 0.034000 0.05040
+/gps/hist/point 0.036000 0.04854
+/gps/hist/point 0.038000 0.05334
+/gps/hist/point 0.040000 0.05814
+/gps/hist/point 0.042000 0.06294
+/gps/hist/point 0.044000 0.06907
+/gps/hist/point 0.046000 0.07787
+/gps/hist/point 0.048000 0.09267
+/gps/hist/point 0.050000 0.11014
+/gps/hist/point 0.052000 0.11895
+/gps/hist/point 0.054000 0.10707
+/gps/hist/point 0.056000 0.14654
+/gps/hist/point 0.057000 0.22194
+/gps/hist/point 0.058000 0.38867
+/gps/hist/point 0.059000 0.47740
+/gps/hist/point 0.060000 0.40014
+/gps/hist/point 0.061000 0.14820
+/gps/hist/point 0.062000 0.01360
+/gps/hist/point 0.063000 0.00367
+/gps/hist/point 0.064000 0.0
+
+/run/beamOn 100000

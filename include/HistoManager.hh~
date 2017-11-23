@@ -1,0 +1,51 @@
+#ifndef HistoManager_h
+#define HistoManager_h 1
+
+#include "globals.hh"
+
+#include "g4root.hh"
+////#include "g4xml.hh"
+////#include "g4hbook.hh"
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+const G4int MaxHisto = 5;
+const G4int MaxNtCol = 100;
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+class HistoManager
+{
+  public:
+
+    HistoManager();
+   ~HistoManager();
+
+    void book();
+    void save();
+
+    void FillHisto(G4int id, G4double e, G4double weight = 1.0);
+    void Normalize(G4int id, G4double fac);    
+
+    // void FillNtuple(G4double EnergyAbs, G4double EnergyGap,
+    //                 G4double TrackLAbs, G4double TrackLGap);
+  
+  void FillNtuple(G4int, G4int, G4double, G4int);
+  void FillNtuple(G4int, G4int, G4double*, G4int);
+    
+    void PrintStatistic();        
+
+  private:
+  
+    G4String      fFileName[2];
+    G4bool        fFactoryOn;    
+
+    G4int         fHistId[MaxHisto];
+    G4AnaH1*      fHistPt[MaxHisto];
+    G4int         fNtColId[MaxNtCol];
+};
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+#endif
+

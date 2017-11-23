@@ -1,0 +1,273 @@
+#ifndef EventAction_h
+#define EventAction_h 1
+
+#include "G4UserEventAction.hh"
+#include "globals.hh"
+#include "G4ThreeVector.hh"
+#include "G4ios.hh"
+
+//aggiunta
+#include "G4VHitsCollection.hh"
+#include "PrimaryGeneratorAction.hh"
+#include "RunAction.hh"
+
+class RunAction;
+class PrimaryGeneratorAction;
+class EventActionMessenger;
+
+
+class EventAction : public G4UserEventAction
+{
+public:
+  EventAction();
+  virtual ~EventAction();
+  
+  virtual void  BeginOfEventAction(const G4Event* event);
+  virtual void    EndOfEventAction(const G4Event* event);
+
+<<<<<<< HEAD
+  /* void EventInfoMC(G4int iPartName, G4int iInteraction,G4double iEnergy, G4int iStep, G4int iTrackId, G4int iParentId, G4int iVolume, G4ThreeVector *Mom);
+  
+  void EventInfoRecoilFirst(G4int iInteraction, G4double iEnergyRecoil, G4int iStep, G4int iTrackId, G4int iParentId, G4ThreeVector *Pos, G4ThreeVector *Mom, G4double iTrackLength, G4int iPartName, G4int iVolume,G4double iEnergyDep);      
+
+  void EventInfoRecoilLast(G4int iInteraction, G4double iEnergyRecoil, G4int iStep, G4int iTrackId, G4int iParentId, G4ThreeVector *Pos,G4ThreeVector *LastPos, G4ThreeVector *Mom, G4double iTrackLength, G4int iPartName, G4int iVolume,G4double iEnergyDep, G4int iCopyNo);      
+
+  void ClearVectors();*/
+=======
+  void EventInfoNeutronAll(G4int iInteraction,G4double iEnergyNeutron, G4int iStep, G4int iTrackId, G4int iParentId, G4int iVolume, G4ThreeVector *Mom);
+  
+  void EventInfoRecoilFirst(G4int iInteraction, G4double iEnergyRecoil, G4int iStep, G4int iTrackId, G4int iParentId, G4ThreeVector *Pos, G4ThreeVector *Mom, G4double iTrackLength, G4int iPartName, G4int iVolume,G4double iEnergyDep);      
+
+  void EventInfoRecoilLast(G4int iInteraction, G4double iEnergyRecoil, G4int iStep, G4int iTrackId, G4int iParentId, G4ThreeVector *Pos,G4ThreeVector *LastPos, G4ThreeVector *Mom, G4double iTrackLength, G4int iPartName, G4int iVolume,G4double iEnergyDep);      
+
+  void ClearVectors();
+>>>>>>> 9d5b8f85085057b3eace7d4b633b47f941301264
+
+private:
+  
+  const long* seeds;
+  G4double energy_pri;
+
+  G4int event_id;
+
+  G4int BrickCollID;
+  G4int SpectroCollID;
+  G4int B_hits;
+  G4int S_hits;
+<<<<<<< HEAD
+  /*
+=======
+
+>>>>>>> 9d5b8f85085057b3eace7d4b633b47f941301264
+  G4int Nneu;
+  G4int Nrec;
+  G4int Nrec2;
+
+  std::vector<G4int>    vInteraction;
+<<<<<<< HEAD
+  std::vector<G4double> vEnergy;
+=======
+  std::vector<G4double> vEnergyNeutron;
+>>>>>>> 9d5b8f85085057b3eace7d4b633b47f941301264
+  std::vector<G4int>    vStep;         
+  std::vector<G4int>    vTrackId;      
+  std::vector<G4int>    vParentId;     
+  std::vector<G4int>    vVolume;
+  std::vector<G4double> vMC_PX;    
+  std::vector<G4double> vMC_PY;    
+<<<<<<< HEAD
+  std::vector<G4double> vMC_PZ;
+  std::vector<G4int>    vPartName;      
+=======
+  std::vector<G4double> vMC_PZ; 
+>>>>>>> 9d5b8f85085057b3eace7d4b633b47f941301264
+
+  std::vector<G4int>    vInteractionFirst;
+  std::vector<G4double> vEnergyFirst;
+  std::vector<G4double> vEnergyDepFirst;
+  std::vector<G4int>    vStepFirst;   
+  std::vector<G4int>    vTrackIdFirst;
+  std::vector<G4int>    vParentIdFirst;
+  std::vector<G4double> vFirstHitX;     
+  std::vector<G4double> vFirstHitY;     
+  std::vector<G4double> vFirstHitZ;    
+  std::vector<G4double> vFirstHitPX;    
+  std::vector<G4double> vFirstHitPY;    
+  std::vector<G4double> vFirstHitPZ;    
+  std::vector<G4double> vTrackLengthFirst;    
+  std::vector<G4int>    vPartNameFirst;      
+  std::vector<G4int>    vVolumeFirst;          
+
+  std::vector<G4int>    vInteractionLast;
+  std::vector<G4double> vEnergyLast;
+  std::vector<G4double> vEnergyDepLast;
+  std::vector<G4int>    vStepLast;   
+  std::vector<G4int>    vTrackIdLast;
+  std::vector<G4int>    vParentIdLast;
+  std::vector<G4double> vLastHitX;     
+  std::vector<G4double> vLastHitY;     
+  std::vector<G4double> vLastHitZ;
+  std::vector<G4double> vPostLastHitX;     
+  std::vector<G4double> vPostLastHitY;     
+  std::vector<G4double> vPostLastHitZ;     
+  std::vector<G4double> vLastHitPX;    
+  std::vector<G4double> vLastHitPY;    
+  std::vector<G4double> vLastHitPZ;    
+  std::vector<G4double> vTrackLengthLast;    
+  std::vector<G4int>    vPartNameLast;      
+<<<<<<< HEAD
+  std::vector<G4int>    vVolumeLast;
+  std::vector<G4int>    vCopyNoLast;         
+  
+  RunAction* runAct;  //pointer to run action 
+  PrimaryGeneratorAction* genAction; // pointer to particle generator 
+  */
+};
+/*
+=======
+  std::vector<G4int>    vVolumeLast;         
+  
+  RunAction* runAct;  //pointer to run action 
+  PrimaryGeneratorAction* genAction; // pointer to particle generator 
+  
+};
+      
+>>>>>>> 9d5b8f85085057b3eace7d4b633b47f941301264
+// inline functions
+inline void EventAction::ClearVectors(){
+
+  vInteraction.clear();
+<<<<<<< HEAD
+  vEnergy.clear();
+=======
+  vEnergyNeutron.clear();
+>>>>>>> 9d5b8f85085057b3eace7d4b633b47f941301264
+  vStep.clear();         
+  vTrackId.clear();      
+  vParentId.clear();     
+  vVolume.clear();
+  vMC_PX.clear();
+  vMC_PY.clear();
+  vMC_PZ.clear();
+<<<<<<< HEAD
+  vPartName.clear();
+=======
+>>>>>>> 9d5b8f85085057b3eace7d4b633b47f941301264
+
+  vInteractionFirst.clear();
+  vEnergyFirst.clear();
+  vEnergyDepFirst.clear();
+  vStepFirst.clear();
+  vTrackIdFirst.clear();
+  vParentIdFirst.clear();
+  vFirstHitX.clear();
+  vFirstHitY.clear();
+  vFirstHitZ.clear();
+  vFirstHitPX.clear();
+  vFirstHitPY.clear();
+  vFirstHitPZ.clear();
+  vTrackLengthFirst.clear();
+  vPartNameFirst.clear();
+  vVolumeFirst.clear();
+
+  vInteractionLast.clear();
+  vEnergyLast.clear();
+  vEnergyDepLast.clear();
+  vStepLast.clear();
+  vTrackIdLast.clear();
+  vParentIdLast.clear();
+  vLastHitX.clear();
+  vLastHitY.clear();
+  vLastHitZ.clear();
+  vPostLastHitX.clear();
+  vPostLastHitY.clear();
+  vPostLastHitZ.clear();
+  vLastHitPX.clear();
+  vLastHitPY.clear();
+  vLastHitPZ.clear();
+  vTrackLengthLast.clear();
+  vPartNameLast.clear();
+  vVolumeLast.clear();
+<<<<<<< HEAD
+  vCopyNoLast.clear();
+
+}
+   
+inline void EventAction::EventInfoMC(G4int iPartName, G4int iInteraction,G4double iEnergy, G4int iStep, G4int iTrackId, G4int iParentId, G4int iVolume, G4ThreeVector *Mom) {
+  vPartName.push_back(iPartName);
+  vInteraction.push_back(iInteraction);
+  vEnergy.push_back(iEnergy);
+=======
+
+}
+   
+inline void EventAction::EventInfoNeutronAll(G4int iInteraction,G4double iEnergyNeutron, G4int iStep, G4int iTrackId, G4int iParentId, G4int iVolume, G4ThreeVector *Mom) {
+  vInteraction.push_back(iInteraction);
+  vEnergyNeutron.push_back(iEnergyNeutron);
+>>>>>>> 9d5b8f85085057b3eace7d4b633b47f941301264
+  vStep.push_back(iStep);
+  vTrackId.push_back(iTrackId);
+  vParentId.push_back(iParentId);
+  vVolume.push_back(iVolume);
+  vMC_PX.push_back(Mom->x());
+  vMC_PY.push_back(Mom->y());
+  vMC_PZ.push_back(Mom->z());
+  Nneu ++;
+}
+
+inline void EventAction::EventInfoRecoilFirst(G4int iInteraction, G4double iEnergyRecoil, G4int iStep, G4int iTrackId, G4int iParentId, G4ThreeVector *Pos, G4ThreeVector *Mom, G4double iTrackLength, G4int iPartName, G4int iVolume, G4double iEnergyDep){
+
+  vInteractionFirst.push_back(iInteraction);
+  vEnergyFirst.push_back(iEnergyRecoil);
+  vEnergyDepFirst.push_back(iEnergyDep);
+  vStepFirst.push_back(iStep);
+  vTrackIdFirst.push_back(iTrackId);
+  vParentIdFirst.push_back(iParentId);
+  vFirstHitX.push_back(Pos->x());
+  vFirstHitY.push_back(Pos->y());
+  vFirstHitZ.push_back(Pos->z());
+  vFirstHitPX.push_back(Mom->x());
+  vFirstHitPY.push_back(Mom->y());
+  vFirstHitPZ.push_back(Mom->z());
+  vTrackLengthFirst.push_back(iTrackLength);
+  vPartNameFirst.push_back(iPartName);
+  vVolumeFirst.push_back(iVolume);
+}
+
+<<<<<<< HEAD
+inline void EventAction::EventInfoRecoilLast(G4int iInteraction, G4double iEnergyRecoil, G4int iStep, G4int iTrackId, G4int iParentId, G4ThreeVector *Pos,G4ThreeVector *LastPos, G4ThreeVector *Mom, G4double iTrackLength, G4int iPartName, G4int iVolume,G4double iEnergyDep, G4int iCopyNo){
+=======
+inline void EventAction::EventInfoRecoilLast(G4int iInteraction, G4double iEnergyRecoil, G4int iStep, G4int iTrackId, G4int iParentId, G4ThreeVector *Pos,G4ThreeVector *LastPos, G4ThreeVector *Mom, G4double iTrackLength, G4int iPartName, G4int iVolume,G4double iEnergyDep){
+>>>>>>> 9d5b8f85085057b3eace7d4b633b47f941301264
+
+  vInteractionLast.push_back(iInteraction);
+  vEnergyLast.push_back(iEnergyRecoil);
+  vEnergyDepLast.push_back(iEnergyDep);
+  vStepLast.push_back(iStep);
+  vTrackIdLast.push_back(iTrackId);
+  vParentIdLast.push_back(iParentId);
+  vLastHitX.push_back(Pos->x());
+  vLastHitY.push_back(Pos->y());
+  vLastHitZ.push_back(Pos->z());
+  vPostLastHitX.push_back(LastPos->x());
+  vPostLastHitY.push_back(LastPos->y());
+  vPostLastHitZ.push_back(LastPos->z());
+  vLastHitPX.push_back(Mom->x());
+  vLastHitPY.push_back(Mom->y());
+  vLastHitPZ.push_back(Mom->z());
+  vTrackLengthLast.push_back(iTrackLength);
+  vPartNameLast.push_back(iPartName);
+  vVolumeLast.push_back(iVolume);
+<<<<<<< HEAD
+  vCopyNoLast.push_back(iCopyNo);
+}
+*/
+=======
+}
+
+>>>>>>> 9d5b8f85085057b3eace7d4b633b47f941301264
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+#endif
+
