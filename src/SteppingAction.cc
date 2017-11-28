@@ -198,7 +198,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
   //--------------------------------------------------------------------------------------------------------------------------------------------------------------------//
   //-------------------PRINT DATA----------------------------------------------------------------------------------------------------------------//
   if((whichVol==1 || whichVol==2) && (pdgcode==11 || pdgcode==-11 || pdgcode==2212 || pdgcode>=1000000000 || pdgcode==0 || pdgcode==22) ){
-    G4cout << eID << " " << parentID << " " << trackID << " " << StepNo << " " <<  name << " " << creator << " " <<  proc->GetProcessName() << " " << whichInter << " " << kinene << " " << edep << " " << steplength << " "  << prePointPos[0] << " " << prePointPos[1] << " " << prePointPos[2] <<  " " << postPointPos[0] << " " << postPointPos[1] << " " << postPointPos[2] << " " << whichVol << " " << copyNo <<  " " << G4endl;    
+    G4cout << eID << " " << parentID << " " << trackID << " " << StepNo << " " <<  name << " " << creator << " " <<  proc->GetProcessName() << " " << whichInter << " " << kinene << " " << edep << " " << steplength << " "  << " " << tracklength << " " << prePointPos[0] << " " << prePointPos[1] << " " << prePointPos[2] <<  " " << postPointPos[0] << " " << postPointPos[1] << " " << postPointPos[2] << " " << whichVol << " " << copyNo <<  " " << G4endl;    
   }
   //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 }         // end user stepping action
