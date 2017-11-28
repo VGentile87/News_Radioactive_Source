@@ -1,0 +1,69 @@
+# $Id: run.mac 68015 2013-03-13 13:27:27Z gcosmo $
+#
+# Macro file for "AnaEx01.cc"
+# 
+# can be run in batch, without graphic
+# or interactively: Idle> /control/execute run.mac
+#
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
+/gps/particle neutron
+
+/gps/pos/type Volume
+/gps/pos/shape Para
+/gps/pos/centre 0. 0. 0. cm
+
+#CHU 405
+#/gps/pos/halfx 3.490 cm
+#/gps/pos/halfy 3.490 cm
+#/gps/pos/halfz 3.490 cm
+
+#CHU FABIO / NAKA
+#/gps/pos/halfx 3.393 cm
+#/gps/pos/halfy 3.393 cm
+#/gps/pos/halfz 3.393 cm
+
+#CHU FABIO / NAKA slim
+/gps/pos/halfx 12.5 cm
+/gps/pos/halfy 12.5 cm
+/gps/pos/halfz 0.25 cm
+
+#CHU 404
+#/gps/pos/halfx 3.0375 cm
+#/gps/pos/halfy 3.0375 cm
+#/gps/pos/halfz 3.0375 cm
+
+/gps/ang/type iso
+
+/gps/ene/type User
+/gps/hist/type energy
+
+# Distribuzione neutroni radiogenici
+/gps/hist/point		0.0	0.0
+/gps/hist/point		0.25	0.3
+/gps/hist/point		0.75	2.275
+/gps/hist/point		1.25	2.158
+/gps/hist/point		1.75	1.613
+/gps/hist/point		2.25	0.994
+/gps/hist/point		2.75	0.718
+/gps/hist/point		3.25	0.485
+/gps/hist/point		3.75	0.448
+/gps/hist/point		4.25	0.395
+/gps/hist/point		4.75	0.294
+/gps/hist/point		5.25	0.257
+/gps/hist/point		5.75	0.193
+/gps/hist/point		6.25	0.156
+/gps/hist/point		6.75	0.139
+/gps/hist/point		7.25	0.113
+/gps/hist/point		7.75	0.07
+/gps/hist/point		8.25	0.038
+/gps/hist/point		8.75	0.027
+/gps/hist/point		9.25	0.016
+/gps/hist/point		9.75	0.011
+/gps/hist/point		10	0.005
+
+
+/run/beamOn 100

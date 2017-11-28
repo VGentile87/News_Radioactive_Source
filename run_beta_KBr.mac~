@@ -1,0 +1,78 @@
+# $Id: run.mac 68015 2013-03-13 13:27:27Z gcosmo $
+#
+# Macro file for "AnaEx01.cc"
+# 
+# can be run in batch, without graphic
+# or interactively: Idle> /control/execute run.mac
+#
+/control/verbose 2
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+
+/gps/particle e-
+
+/gps/pos/type Volume
+/gps/pos/shape Para
+/gps/pos/centre 0. 0. 0. cm
+/gps/pos/halfx 10 cm #4.0 cm
+/gps/pos/halfy 10 cm #1.350 cm
+/gps/pos/halfz 10 cm #0.7 cm
+/gps/pos/confine KBr_source
+/gps/ang/type iso
+
+/gps/ang/type iso
+/gps/ang/mintheta  0.
+/gps/ang/maxtheta  1.571
+
+/gps/ene/type User
+/gps/hist/type energy
+
+# Beta-Decay K40	
+/gps/hist/point	0	0
+/gps/hist/point	0.03	27.44108
+/gps/hist/point 0.06    554.96633
+/gps/hist/point 0.09    1128.78788
+/gps/hist/point	0.12	2276.96078
+/gps/hist/point	0.15	3118.13725
+/gps/hist/point	0.18	3323.03922
+/gps/hist/point	0.21	3614.21569
+/gps/hist/point	0.24	3749.01961
+/gps/hist/point	0.27	3867.64706
+/gps/hist/point	0.3	3921.56863
+/gps/hist/point	0.33	4061.76471
+/gps/hist/point	0.36	4272.05882
+/gps/hist/point	0.39	4245.09804
+/gps/hist/point	0.42	4310.8165
+/gps/hist/point	0.45	4393.85522
+/gps/hist/point	0.48	4291.83502
+/gps/hist/point	0.51	4223.52941
+/gps/hist/point	0.54	4207.35294
+/gps/hist/point	0.57	4148.03922
+/gps/hist/point	0.6	4056.37255
+/gps/hist/point	0.63	3991.66667
+/gps/hist/point	0.66	3819.11765
+/gps/hist/point	0.69	3668.13725
+/gps/hist/point	0.72	3490.19608
+/gps/hist/point	0.75	3350
+/gps/hist/point	0.78	3204.41176
+/gps/hist/point	0.81	2924.01961
+/gps/hist/point	0.84	2686.76471
+/gps/hist/point	0.87	2492.64706
+/gps/hist/point	0.9	2282.35294
+/gps/hist/point	0.93	2039.70588
+/gps/hist/point	0.96	1813.23529
+/gps/hist/point	0.99	1489.70588
+/gps/hist/point	1.02	1360.29412
+/gps/hist/point	1.05	1144.60784
+/gps/hist/point	1.08	896.56863
+/gps/hist/point	1.11	750.98039
+/gps/hist/point	1.14	529.90196
+/gps/hist/point	1.17	335.78431
+/gps/hist/point	1.2	238.88889
+/gps/hist/point	1.23	108.96465
+/gps/hist/point	1.26	34.63805
+/gps/hist/point	1.29	15.867
+
+
+/run/beamOn 1000

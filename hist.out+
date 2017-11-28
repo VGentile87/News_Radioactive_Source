@@ -1,0 +1,592 @@
+    1  sudo apt-get install update
+    2  sudo apt-get install upgrade
+    3  sudo apt-get update
+    4  sudo apt-get upgrade
+    5  sudo apt-get updater
+    6  sudo apt-get update
+    7  gedit /etc/hostname 
+    8  sudo gedit /etc/hostname 
+    9  sudo gedit /etc/hosts 
+   10  exit
+   11  sudo service hostname.sh 
+   12  sudo gedit /etc/hostname 
+   13  sudo service hostname start 
+   14  sudo apt-get install emacs
+   15  sudo apt-get install chromium-browser
+   16  chromium-browser 
+   17  ls
+   18  tar -xvzf root_v5.34.36.source.tar.gz 
+   19  ls
+   20  cd root/
+   21  ls
+   22  cd build/
+   23  ls
+   24  cd ..
+   25  ls
+   26  cd macros/
+   27  ls
+   28  cd ..
+   29  cd
+   30  cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
+   31  ~/.dropbox-dist/dropboxd
+   32  ~/.dropbox-dist/dropboxd &
+   33  ls
+   34  cd root/
+   35  grep --color -n -i -r "thisroot.sh" 
+   36  ls
+   37  more README/
+   38  ./configure 
+   39  ls
+   40  CD CMakeLists.txt 
+   41  cd co
+   42  cd config/
+   43  ls
+   44  pwd
+   45  root 
+   46  cd
+   47  emacs .bashrc 
+   48  exit
+   49  history 
+   50  exi
+   51  exit
+   52  ls
+   53  cd root/config/
+   54  ls
+   55  pwd
+   56  cd
+   57  emacs .bashrc
+   58  source thisroot.st
+   59  source thisroot.sh
+   60  ls
+   61  cd root/config/
+   62  source thisroot.sh 
+   63  cd ..
+   64  ls
+   65  cd README/
+   66  LS
+   67  ls
+   68  cd ..
+   69  ls
+   70  source configure 
+   71  sudo apt-get install build-essential g++ g77 python2.5-dev libX11-dev libxext-dev libXpm-dev libgl1-mesa-dev libglu1-xorg-dev libmysqlclient15-dev libpng12-dev libjpeg62-dev fftw3-dev libxml2-dev libXft-dev libxcb-shape0-dev libpacklib1-dev
+   72  ./configure 
+   73  make
+   74  cd
+   75  cd /etc/
+   76  ks
+   77  ls
+   78  more profile
+   79  ls
+   80  cd
+   81  sudo apt-get update
+   82  sudo apt-get install build-essential g++ g77 python2.5-dev libX11-dev libxext-dev libXpm-dev libgl1-mesa-dev libglu1-xorg-dev libmysqlclient15-dev libpng12-dev libjpeg62-dev fftw3-dev libxml2-dev libXft-dev libxcb-shape0-dev libpacklib1-dev
+   83  sudo apt get install build-essential 
+   84  sudo apt-get install build-essential 
+   85  echo $ROOTSYS 
+   86  cd root/
+   87  ./configure 
+   88  cat /etc/apt/sources.list
+   89  emacs /etc/apt/sources.list
+   90  sudo emacs /etc/apt/sources.list
+   91  sudo apt-get update
+   92  sudo apt-get upgrade
+   93  sudo apt-get install libX11
+   94  sudo apt-get install libx11-dev
+   95  sudo apt-get install gfortran+
+   96  sudo apt-get install gfortran
+   97  ./configure 
+   98  sudo apt-get install libx11
+   99  sudo apt-get install libx11-6
+  100  sudo apt-get install libxpm-dev
+  101  ./configure 
+  102  sudo apt-get install libxft
+  103  sudo apt-get install libxft-dev 
+  104  ./configure 
+  105  sudo apt-get install libxext-dev 
+  106  ./configure 
+  107  sudo apt-get install build-essential
+  108  sudo apt-get install libglu1-mesa-dev freeglut3-dev mesa-common-dev
+  109  ./configure 
+  110  make
+  111  root
+  112  source config/thisroot.sh 
+  113  root 
+  114  source bin/thisroot.sh 
+  115  root
+  116  cd
+  117  emacs .bashrc
+  118  exit
+  119  cd root/
+  120  ls
+  121  make
+  122  ./configure --help
+  123  ./configure 64
+  124  ./configure --help
+  125  clear
+  126  ./configure --help
+  127  ./configure linux
+  128  ls
+  129  make
+  130  sudo apt-get install cmake
+  131  make 
+  132  ls
+  133  cmake
+  134  cd cmake/
+  135  ls
+  136  cd ..
+  137  ls
+  138  rm *
+  139  rm -rf *
+  140  ls
+  141  cd ..
+  142  ls
+  143  tar -xvzf root_v5.34.36.source.tar.gz 
+  144  ls
+  145  cd root/
+  146  ls
+  147  cd build/
+  148  ps
+  149  ls
+  150  cd ..
+  151  exit
+  152  ls -lrth
+  153  rm -rf *
+  154  cmake -DGeant4_DIR=/home/valerio/geant4_10_03_p03/lib/Geant4-10.3.3/ /home/valerio/Desktop/News_radioactive_source/
+  155  make
+  156  ./AnaEx01
+  157  ls
+  158  exit
+  159  cd
+  160  emacs .bashrc
+  161  exit
+  162  tar -xvzf HepMC-2.06.09.tar.gz 
+  163  mkdir HepMC-2.06.09_build HepMC-2.06.09_install
+  164  cd HepMC-2.06.09_build/
+  165  cmake -DCMAKE_INSTALL_PREFIX=/home/valerio/HepMC-2.06.09_install/ -Dmomentum:STRING=MEV -Dlength:STRING=MM -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++  /home/valerio/HepMC-2.06.09/
+  166  ls
+  167  make all
+  168  make install
+  169  exit
+  170  ls
+  171  rm -rf *
+  172  cmake -DGeant4_DIR=/home/valerio/geant4_10_03_p03/lib/Geant4-10.3.3/ /home/valerio/Desktop/HepMCEx01/
+  173  make
+  174  ls
+  175  more hepmc_ascii.in 
+  176  ./HepMCEx01 
+  177  LS
+  178  ls
+  179  more vis.mac 
+  180  exit
+  181  $HEPMC_DIR/
+  182  exit
+  183  cpstart 
+  184  exit
+  185  ls -a
+  186  emacs .bashrc 
+  187  cd
+  188  emacs .bashrc
+  189  exit
+  190  cd 
+  191  cd /media/valerio/TOSHIBA\ EXT/NEWS-8g-sample/new_data_structure/Untitled\ Folder/
+  192  cpstart 
+  193  source start.sh 
+  194  ls -lrth
+  195  root -l dm_tracks.dm.root 
+  196  exit
+  197  root -l
+  198  mkdir geant4_10_03_p03_build
+  199  cd geant4_10_03_p03_build/
+  200  mkdir ../geant4_10_03_p03_install
+  201  cmake -DCMAKE_INSTALL_PREFIX=/home/valerio/geant4_10_03_p03/  -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_OPENGL_X11=ON -DGEANT4_USE_QT=ON -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON  -DGEANT4_BUILD_MULTITHREADED=ON /home/valerio/geant4_10_03_p03/
+  202  ls
+  203  sudo apt-get install libqt
+  204  sudo apt-get install libqt4
+  205  sudo apt-get install freeglut3 freeglut3-dev mesa-utils
+  206  sudo apt-get install libfontconfig1-dev libfreetype6-dev libx11-dev libxcursor-dev libxext-dev libxfixes-dev libxft-dev libxi-dev libxrandr-dev libxrender-dev
+  207  cmake -DCMAKE_INSTALL_PREFIX=/home/valerio/geant4_10_03_p03/  -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_OPENGL_X11=ON -DGEANT4_USE_QT=ON -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON  -DGEANT4_BUILD_MULTITHREADED=ON /home/valerio/geant4_10_03_p03/
+  208  sudo apt-get install qt-sdk
+  209  cmake -DCMAKE_INSTALL_PREFIX=/home/valerio/geant4_10_03_p03/  -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_OPENGL_X11=ON -DGEANT4_USE_QT=ON -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON  -DGEANT4_BUILD_MULTITHREADED=ON /home/valerio/geant4_10_03_p03/
+  210  sudo apt-get install libx11-dev libxmu-dev
+  211  cmake -DCMAKE_INSTALL_PREFIX=/home/valerio/geant4_10_03_p03/  -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_OPENGL_X11=ON -DGEANT4_USE_QT=ON -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON  -DGEANT4_BUILD_MULTITHREADED=ON /home/valerio/geant4_10_03_p03/
+  212  ls
+  213  make -j4
+  214  make install
+  215  ls
+  216  cd ..
+  217  ls
+  218  cd geant4_10_03_p03_install/
+  219  cd ..
+  220  rm -rf geant4_10_03_p03_install/
+  221  cd geant4_10_03_p03
+  222  grep --color -n -i -r "geant4.sh" 
+  223  cd bin/
+  224  ls
+  225  pwd
+  226  cd
+  227  emacs .bashrc
+  228  ls
+  229  emacs .bashrc
+  230  exit
+  231  pwd
+  232  exit
+  233  cd
+  234  cd Dropbox/DMDS/src/macros/
+  235  ls
+  236  emacs myData_v5.C &
+  237  cd
+  238  exit
+  239  echo $DM_ROOT 
+  240  source start.sh 
+  241  root -l debug6_test_grain.root 
+  242  ls
+  243  mv debug6_test_grain.root C30keV_0deg_20171120.root
+  244  cd ..
+  245  rm
+  246  mv Untitled\ Folder/ C30keV_0deg_20171120
+  247  ls
+  248  cd C30keV_0deg_20171120/
+  249  LS
+  250  ls
+  251  root -l C30keV_0deg_20171120.root 
+  252  source start.sh 
+  253  root -l debug6_test_grain.root 
+  254  exit
+  255  cpstart 
+  256  source start.sh 
+  257  emacs settings.mac 
+  258  source start.sh 
+  259  root -l debug6_test_grain.root 
+  260  exit
+  261  sudo apt install apt-transport-https
+  262  curl https://repo.skype.com/data/SKYPE-GPG-KEY | sudo apt-key add -
+  263  sudo apt-get install curl https://repo.skype.com/data/SKYPE-GPG-KEY | sudo apt-key add -
+  264  sudo apt-get install curl
+  265  curl https://repo.skype.com/data/SKYPE-GPG-KEY | sudo apt-key add -
+  266  echo "deb https://repo.skype.com/deb stable main" | sudo tee /etc/apt/sources.list.d/skypeforlinux.list
+  267  sudo apt update
+  268  sudo apt install skypeforlinux 
+  269  skypeforlinux 
+  270  exit
+  271  cmake -DGeant4_DIR=/home/valerio/geant4_10_03_p03/lib/Geant4-10.3.3/ /home/valerio/Desktop/News_radioactive_source/
+  272  emacs ../CMakeLists.txt
+  273  cmake -DGeant4_DIR=/home/valerio/geant4_10_03_p03/lib/Geant4-10.3.3/ /home/valerio/Desktop/News_radioactive_source/
+  274  make
+  275  emacs ../AnaEx01.cc
+  276  make
+  277  emacs ../AnaEx01.cc
+  278  make
+  279  emacs ../AnaEx01.cc
+  280  make
+  281  emacs ../src/PhysicsList.cc
+  282  make
+  283  emacs ../src/PhysicsList.cc
+  284  make
+  285  ./AnaEx01
+  286  gedit ../init_vis.mac 
+  287  make
+  288  ./AnaEx01
+  289  ./AnaEx01 -m run_gamma_Am241.mac 
+  290  emacs init.mac 
+  291  make
+  292  emacs init.mac 
+  293  ./AnaEx01 -m run_gamma_Am241.mac 
+  294  emacs init.mac 
+  295  ./AnaEx01 -m run_gamma_Am241.mac 
+  296  emacs init.mac 
+  297  emacs ../src/SteppingAction.cc
+  298  cd
+  299  cd Desktop/News_radioactive_source/
+  300  git init 
+  301  ls
+  302  git clone /home/valerio/Desktop/News_radioactive_source/
+  303  LS
+  304  ls
+  305  git add *
+  306  ls
+  307  git commit -m "Test NEWSdm"
+  308  git config --global user.name "VGentile87"
+  309  git commit -m "Test NEWSdm"
+  310  git config user.name "VGentile87"
+  311  git commit -m "Test NEWSdm"
+  312  git config user.email  "valerio.gentile@gssi.it"
+  313  git commit -m "Test NEWSdm"
+  314  git 
+  315  git push origin News_radioactive_source
+  316  git push origin master
+  317  git push News_radioactive_source master
+  318  ls
+  319  git push origin master
+  320  git push News_radioactive_source master
+  321  git checkout master 
+  322  git push origin/News_radioactive_source master
+  323  sudo git push origin master
+  324  sudo git push News_radioactive_source master
+  325  git push VGentile87/News_radioactive_source master
+  326  git remote -v
+  327  ssh-keygen -t rsa
+  328  eval ssh-agent 
+  329  ssh-keygen -t rsa
+  330  sudo git push origin master
+  331  sudo git push News_radioactive_source master
+  332  git push origin master
+  333  git init --bare News_radioactive_source.git
+  334  git init --bare 
+  335  git remote add origin VGentile87/News_radioactive_source.git
+  336  git push origin master
+  337  git remote add origin /home/valerio/Desktop/News_radioactive_source/
+  338  git remote remove origin
+  339  git remote add origin https://github.com/VGentile87/News_radioactive_source
+  340  git push origin master
+  341  git pull 
+  342  git pull <remote>
+  343  git pull origin 
+  344  git pull origin master
+  345  ls
+  346  cd refs/
+  347  ls
+  348  cd ..
+  349  ls
+  350  cd branches/
+  351  ls
+  352  cd ..
+  353  ls
+  354  cd hooks/
+  355  ls
+  356  cd ..
+  357  ls
+  358  cd in
+  359  cd info/
+  360  ls
+  361  cd ,,
+  362  cd ..
+  363  ls
+  364  cd hooks/
+  365  ls
+  366  cd ..
+  367  ls
+  368  cd objects/
+  369  ls
+  370  cd ..
+  371  ls
+  372  cd refs/
+  373  ls
+  374  cd heads/
+  375  ls
+  376  cd ..
+  377  cd tags/
+  378  ls
+  379  cd ..
+  380  ls
+  381  cd ..
+  382  ls
+  383  cd refs/
+  384  ls
+  385  cd ..
+  386  cd News_radioactive_source.git/
+  387  LS
+  388  ls
+  389  cd info/
+  390  ls
+  391  cd ..
+  392  ls
+  393  cd refs/
+  394  ls
+  395  cd tags/
+  396  ls
+  397  cd ..
+  398  ls
+  399  emacs config 
+  400  emacs HEAD 
+  401  emacs description 
+  402  cd branches/
+  403  ls
+  404  cd ..
+  405  cd hooks/
+  406  ls
+  407  cd ..
+  408  ls
+  409  cd info/
+  410  ls
+  411  emacs exclude 
+  412  cd ../objects/
+  413  ls
+  414  cd info/
+  415  ls
+  416  cd ../pack/
+  417  ls
+  418  cd ..
+  419  ls
+  420  cd ..
+  421  ls
+  422  cd refs/
+  423  ls
+  424  cd heads/
+  425  ls
+  426  cd ../tags/
+  427  ls
+  428  cd ../..
+  429  ls
+  430  cd ..
+  431  ls
+  432  git checkout 
+  433  ls
+  434  git remote add origin https://github.com/VGentile87/News_radioactive_source2
+  435  git remote remove origin
+  436  git remote add origin https://github.com/VGentile87/News_radioactive_source2
+  437  git pull origin master
+  438  git merge origin master
+  439  git merge 
+  440  git merge News_radioactive_source
+  441  git merge News_radioactive_source.git/
+  442  git checkout -b feature_x
+  443  git merge 
+  444  git merge News_radioactive_source.git/
+  445  git remote remove origin 
+  446  git remote add origin https://github.com/VGentile87/News_radioactive_source
+  447  git fetch 
+  448  git merge origin/master 
+  449  ls
+  450  cd News_radioactive_source
+  451  ls
+  452  ks
+  453  KS
+  454  ls
+  455  cd ..
+  456  rm News_radioactive_source
+  457  rm -rf News_radioactive_source
+  458  ls
+  459  rm -rf refs/
+  460  rm -rf objects/
+  461  rm -rf branches/
+  462  rm -rf hooks/
+  463  rm -rf info/
+  464  ls
+  465  rm config 
+  466  rm description 
+  467  rm G4_auto_run.sh 
+  468  rm HEAD 
+  469  rm README.md 
+  470  LS
+  471  ls
+  472  cd News_radioactive_source.git/
+  473  ls
+  474  cd ..
+  475  rm -rf News_radioactive_source.git/
+  476  ls
+  477  git init 
+  478  ls
+  479  ls -a
+  480  cd .git/
+  481  ls
+  482  cd ..
+  483  rm -rf .git/
+  484  git init News_Test_electron.git
+  485  ls
+  486  ls -lrth
+  487  ls -a
+  488  cd News_Test_electron.git/
+  489  ls
+  490  LS
+  491  ls
+  492  cd ..
+  493  rm -rf News_Test_electron.git/
+  494  git init News_Test_electron
+  495  LS
+  496  ls
+  497  cd News_Test_electron/
+  498  ls
+  499  ls -a
+  500  cd .git/
+  501  ls
+  502  cd ..
+  503  ls
+  504  cd --
+  505  cd -
+  506  cd ..
+  507  ls
+  508  rm -rf News_Test_electron/
+  509  git init
+  510  ls
+  511  ls -a
+  512  git clone 
+  513  git clone /home/valerio/Desktop/News_radioactive_source/
+  514  LS
+  515  ls
+  516  git add *
+  517  ls
+  518  cd .git/
+  519  ls
+  520  cd objects/
+  521  ls
+  522  cd 01/
+  523  ls
+  524  cd ..
+  525  ls
+  526  cd branches/
+  527  ls
+  528  cd ..
+  529  cd refs/
+  530  ls
+  531  cd ..
+  532  ls
+  533  cd .git/
+  534  ls
+  535  cd ..
+  536  rm -rf .git/
+  537  ls
+  538  git init News_radioactive_source
+  539  ls
+  540  cd News_radioactive_source.gi
+  541  ls
+  542  ls -a
+  543  cd ..
+  544  ls
+  545  ls -a
+  546  git init News_radioactive_source.git
+  547  ls
+  548  cd News_radioactive_source.git/
+  549  ls
+  550  ls -a
+  551  cd ..
+  552  rm -rf News_radioactive_source.git/
+  553  ls
+  554  ls -a
+  555  echo "#nomeprogetto" &gt;&gt; README.md
+  556  git init 
+  557  git commit -m "first commit"
+  558  git config user.name VGentile87
+  559  git config user.mail valgent87
+  560  git commit -m "first commit"
+  561  git config user.name "VGentile87"
+  562  git config user.mail "valgent87"
+  563  git commit -m "first commit"
+  564  git config user.mail "valerio.gentile@gssi.it"
+  565  git commit -m "first commit"
+  566  git config user.name "VGentile87"
+  567  git config user.mail "valerio.gentile@gssi.it"
+  568  git commit -m "first commit"
+  569  git config user.mail "valerio.gentile@gssi.com"
+  570  git commit -m "first commit"
+  571  git config user.name "VGentile87"
+  572  git config user.mail "valerio.gentile@gssi.it"
+  573  git commit -m "first commit"
+  574  git config --global user.mail "valerio.gentile@gssi.it"
+  575  git commit -m "first commit"
+  576  git config --global user.mail valerio.gentile@gssi.it
+  577  git commit -m "first commit"
+  578  git config user.name "VGentile87"
+  579  git config user.mail 
+  580  git config user.mail "valerio.gentile@gssi.it"
+  581  git commit -m "first commit"
+  582  git config user.mail "valerio.gentile@gssi.it"
+  583  git commit -m "first commit"
+  584  exit
+  585  cd Desktop/News_radioactive_source/
+  586  ls
+  587  ls -a
+  588  git config user.name "VGentile87"
+  589  git config user.mail "valerio.gentile@gssi.it"
+  590  git commit -m "first commit"
+  591  history 
+  592  history > hist.out+
